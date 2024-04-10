@@ -6,8 +6,6 @@
 #include "CharacterSpawner.h"
 #include "GridMovement.h"
 
-PRAGMA_DISABLE_OPTIMIZATION;
-
 AStageGrid::AStageGrid()
 {
 
@@ -17,20 +15,21 @@ void AStageGrid::Initialize(ACharacterSpawner* CharacterSpawner)
 {
 	if (IsValid(CharacterSpawner))
 	{
-		CharacterSpawner->OnPlayerPawnSpawned.AddUniqueDynamic(this, &AStageGrid::OnPlayerPawnSpawned);
+		CharacterSpawner->OnCharacterPawnSpawned.AddUniqueDynamic(this, &AStageGrid::OnPlayerPawnSpawned);
 	}
 }
 
+PRAGMA_DISABLE_OPTIMIZATION;
+
 AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 {
-	int TargetRow = FromCell->GetRow();
-	int TargetCol = FromCell->GetCol() + X;
+	TArray<int> ToGridLocation = FromCell->GetGridLocation();
 
-	TargetCol = std::clamp(TargetCol, 0, Width - 1);
+	ToGridLocation[1] = std::clamp(ToGridLocation[1] + X, 0, Width - 1);
 	
 	// TODO: add blocking
 
-	AStageCell* ToCell = Grid[TargetRow][TargetCol];
+	AStageCell* ToCell = GetCell(ToGridLocation);
 
 	AActor* Actor = FromCell->Empty();
 	ToCell->Fill(Actor);
@@ -40,12 +39,11 @@ AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 
 AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 {
-	int TargetRow = FromCell->GetRow() - Y;
-	int TargetCol = FromCell->GetCol();
+	TArray<int> ToGridLocation = FromCell->GetGridLocation();
 
-	TargetRow = std::clamp(TargetRow, 0, Height - 1);
+	ToGridLocation[0] = std::clamp(ToGridLocation[0] - Y, 0, Height - 1);
 
-	AStageCell* ToCell = Grid[TargetRow][TargetCol];
+	AStageCell* ToCell = GetCell(ToGridLocation);
 
 	AActor* Actor = FromCell->Empty();
 	ToCell->Fill(Actor);
@@ -53,14 +51,25 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 	return ToCell;
 }
 
-void AStageGrid::OnPlayerPawnSpawned(APawn* PlayerPawn)
+PRAGMA_ENABLE_OPTIMIZATION;
+
+AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {
-	InitializeOnGrid(PlayerPawn, 0, 0);
+	if (Location[0] >= 0 && Location[0] < Height && Location[1] >= 0 && Location[1] < Width)
+	{
+		return Grid[Location[0]][Location[1]];
+	}
+	return nullptr;
 }
 
-bool AStageGrid::InitializeOnGrid(APawn* Pawn, int Row, int Col)
+void AStageGrid::OnPlayerPawnSpawned(APawn* PlayerPawn, const TArray<int>& StartingLocation)
 {
-	if (!IsValid(Pawn) || Row >= Height || Col >= Width)
+	InitializeOnGrid(PlayerPawn, StartingLocation);
+}
+
+bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation)
+{
+	if (!IsValid(Pawn))
 	{
 		return false;
 	}
@@ -72,7 +81,13 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, int Row, int Col)
 		return false;
 	}
 
-	AStageCell* StageCell = Grid[Row][Col];
+	AStageCell* StageCell = GetCell(StartingLocation);
+
+	if (!IsValid(StageCell))
+	{
+		return false;
+	}
+
 	Pawn->SetActorLocation(StageCell->GetActorLocation());
 	StageCell->Fill(Pawn);
 	
@@ -134,6 +149,4 @@ void AStageGrid::BeginPlay()
 
 	CreateGrid();
 }
-
-PRAGMA_ENABLE_OPTIMIZATION;
 

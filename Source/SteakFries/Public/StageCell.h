@@ -14,7 +14,7 @@ class STEAKFRIES_API AStageCell : public AActor
 public:
 	AStageCell();
 
-	void Initialize(int InRow, int InCol);
+	void Initialize(int Row, int Col);
 
 	void Fill(AActor* Actor);
 
@@ -30,9 +30,7 @@ protected:
 
 	AActor* FillingActor;
 
-	int Row;
-
-	int Col;
+	TArray<int> GridLocation;
 
 public:
 
@@ -51,14 +49,9 @@ public:
 		return FillingActor != nullptr;
 	}
 
-	int GetRow() const
+	TArray<int> GetGridLocation() const
 	{
-		return Row;
-	}
-
-	int GetCol() const
-	{
-		return Col;
+		return GridLocation;
 	}
 
 protected:

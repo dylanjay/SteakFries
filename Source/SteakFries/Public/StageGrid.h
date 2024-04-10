@@ -24,6 +24,8 @@ public:
 
 	AStageCell* TryMoveY(AStageCell* FromCell, int Y);
 
+	AStageCell* GetCell(const TArray<int>& Location);
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -41,9 +43,9 @@ protected:
 
 protected:
 	UFUNCTION()
-	void OnPlayerPawnSpawned(APawn* PlayerPawn);
+	void OnPlayerPawnSpawned(APawn* PlayerPawn, const TArray<int>& StartingLocation);
 
-	bool InitializeOnGrid(APawn* Pawn, int Row, int Col);
+	bool InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation);
 
 	void CreateGrid();
 

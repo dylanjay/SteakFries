@@ -23,6 +23,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AStageGrid> StageGridClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> StartingPlayerLocation = { 7, 3 };
+
 protected:
 
 	UFUNCTION(BlueprintCallable)

@@ -18,7 +18,7 @@ void ABattleGameMode::BeginPlay()
 
   StageGrid->Initialize(CharacterSpawner);
 
-  PlayerPawn = CharacterSpawner->SpawnPlayerPawn();
+  PlayerPawn = CharacterSpawner->SpawnPlayerPawn(StartingPlayerLocation);
 
   Super::BeginPlay();
 }
