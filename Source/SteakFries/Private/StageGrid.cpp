@@ -19,8 +19,6 @@ void AStageGrid::Initialize(ACharacterSpawner* CharacterSpawner)
 	}
 }
 
-PRAGMA_DISABLE_OPTIMIZATION;
-
 AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 {
 	TArray<int> ToGridLocation = FromCell->GetGridLocation();
@@ -50,8 +48,6 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 
 	return ToCell;
 }
-
-PRAGMA_ENABLE_OPTIMIZATION;
 
 AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {

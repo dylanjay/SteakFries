@@ -24,7 +24,16 @@ protected:
 	TSubclassOf<AStageGrid> StageGridClass;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<APawn> PlayerPawnClass;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<int> StartingPlayerLocation = { 7, 3 };
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<APawn> EnemyPawnClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> StartingEnemyLocation = { 3, 3 };
 
 protected:
 

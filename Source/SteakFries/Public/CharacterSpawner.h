@@ -19,14 +19,7 @@ public:
 	FOnCharacterPawnSpawned OnCharacterPawnSpawned;
 
 public:
-	APawn* SpawnPlayerPawn(const TArray<int>& StartingLocation);
-
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<APawn> PlayerPawnClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<APawn>> EnemyPawnClasses;
+	APawn* SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const TArray<int>& StartingLocation);
 
 protected:
 	virtual void BeginPlay() override;
