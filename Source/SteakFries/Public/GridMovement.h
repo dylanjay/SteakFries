@@ -22,10 +22,10 @@ public:
 	void Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	void TryMoveX(int X);
+	bool TryMoveX(int X);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	void TryMoveY(int Y);
+	bool TryMoveY(int Y);
 
 protected:
 

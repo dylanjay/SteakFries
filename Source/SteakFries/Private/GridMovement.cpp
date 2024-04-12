@@ -16,16 +16,40 @@ void UGridMovement::Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell)
 	StageCell = InStageCell;
 }
 
-void UGridMovement::TryMoveX(int X)
+bool UGridMovement::TryMoveX(int X)
 {
-	StageCell = StageGrid->TryMoveX(StageCell, X);
+	if (X == 0)
+	{
+		return false;
+	}
+
+	AStageCell* ToStageCell = nullptr;
+	if (!StageGrid->TryMoveX(StageCell, X, &ToStageCell))
+	{
+		return false;
+	}
+	check(IsValid(ToStageCell));
+	StageCell = ToStageCell;
 	GetOwner()->SetActorLocation(StageCell->GetActorLocation());
+	return true;
 }
 
-void UGridMovement::TryMoveY(int Y)
+bool UGridMovement::TryMoveY(int Y)
 {
-	StageCell = StageGrid->TryMoveY(StageCell, Y);
+	if (Y == 0)
+	{
+		return false;
+	}
+
+	AStageCell* ToStageCell = nullptr;
+	if (!StageGrid->TryMoveY(StageCell, Y, &ToStageCell))
+	{
+		return false;
+	}
+	check(IsValid(ToStageCell));
+	StageCell = ToStageCell;
 	GetOwner()->SetActorLocation(StageCell->GetActorLocation());
+	return true;
 }
 
 void UGridMovement::BeginPlay()

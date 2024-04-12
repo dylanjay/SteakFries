@@ -20,9 +20,9 @@ public:
 
 	void Initialize(ACharacterSpawner* CharacterSpawner);
 
-	AStageCell* TryMoveX(AStageCell* FromCell, int X);
+	bool TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCell);
 
-	AStageCell* TryMoveY(AStageCell* FromCell, int Y);
+	bool TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCell);
 
 	AStageCell* GetCell(const TArray<int>& Location);
 
