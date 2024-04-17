@@ -19,13 +19,11 @@ void AStageGrid::Initialize(ACharacterSpawner* CharacterSpawner)
 	}
 }
 
-PRAGMA_DISABLE_OPTIMIZATION;
-
-bool AStageGrid::TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCell)
+AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 {
 	if (X == 0)
 	{
-		return false;
+		return FromCell;
 	}
 
 	TArray<int> CurCellLocation = FromCell->GetGridLocation();
@@ -33,7 +31,7 @@ bool AStageGrid::TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCe
 	if ((X > 0 && CurCellLocation[1] == Width - 1) ||
 		(X < 0 && CurCellLocation[1] == 0))
 	{
-		return false;
+		return FromCell;
 	}
 
 	int Direction = X > 0 ? 1 : -1;
@@ -43,7 +41,7 @@ bool AStageGrid::TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCe
 
 	if (NextCell->IsFilled())
 	{
-		return false;
+		return FromCell;
 	}
 
 	while (X != 0 && NextCellLocation[1] < Width && NextCellLocation[1] >= 0 && !NextCell->IsFilled())
@@ -57,16 +55,17 @@ bool AStageGrid::TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCe
 	AActor* Actor = FromCell->Empty();
 	AStageCell* CurCell = GetCell(CurCellLocation);
 	CurCell->Fill(Actor);
-	*OutToStageCell = CurCell;
 
-	return true;
+	CharacterCells[Actor] = CurCell;
+
+	return CurCell;
 }
 
-bool AStageGrid::TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCell)
+AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 {
 	if (Y == 0)
 	{
-		return false;
+		return FromCell;
 	}
 
 	TArray<int> CurCellLocation = FromCell->GetGridLocation();
@@ -74,7 +73,7 @@ bool AStageGrid::TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCe
 	if ((Y > 0 && CurCellLocation[0] == 0) ||
 		(Y < 0 && CurCellLocation[0] == Height - 1))
 	{
-		return false;
+		return FromCell;
 	}
 
 	int Direction = Y > 0 ? -1 : 1;
@@ -84,7 +83,7 @@ bool AStageGrid::TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCe
 
 	if (NextCell->IsFilled())
 	{
-		return false;
+		return FromCell;
 	}
 
 	while (Y != 0 && NextCellLocation[0] < Height && NextCellLocation[0] >= 0 && !NextCell->IsFilled())
@@ -98,12 +97,21 @@ bool AStageGrid::TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCe
 	AActor* Actor = FromCell->Empty();
 	AStageCell* CurCell = GetCell(CurCellLocation);
 	CurCell->Fill(Actor);
-	*OutToStageCell = CurCell;
 
-	return true;
+	CharacterCells[Actor] = CurCell;
+
+	return CurCell;
 }
 
-PRAGMA_ENABLE_OPTIMIZATION;
+AStageCell* AStageGrid::FindCharacter(AActor* Actor)
+{
+	if (!CharacterCells.Contains(Actor))
+	{ 
+		return nullptr;
+	}
+	
+	return CharacterCells[Actor];
+}
 
 AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {
@@ -135,10 +143,12 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocati
 
 	AStageCell* StageCell = GetCell(StartingLocation);
 
-	if (!IsValid(StageCell))
+	if (!IsValid(StageCell) || StageCell->IsFilled())
 	{
 		return false;
 	}
+
+	CharacterCells.Add(Pawn, StageCell);
 
 	Pawn->SetActorLocation(StageCell->GetActorLocation());
 	StageCell->Fill(Pawn);

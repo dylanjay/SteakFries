@@ -5,6 +5,16 @@
 #include "CharacterSpawner.h"
 #include "StageGrid.h"
 
+ACharacterSpawner* ABattleGameMode::GetCharacterSpawner() const
+{
+  return CharacterSpawner;
+}
+
+AStageGrid* ABattleGameMode::GetStageGrid() const
+{
+  return StageGrid;
+}
+
 APawn* ABattleGameMode::GetPlayerPawn() const
 {
   return PlayerPawn;

@@ -20,11 +20,19 @@ public:
 
 	void Initialize(ACharacterSpawner* CharacterSpawner);
 
-	bool TryMoveX(AStageCell* FromCell, int X, AStageCell** OutToStageCell);
-
-	bool TryMoveY(AStageCell* FromCell, int Y, AStageCell** OutToStageCell);
-
+	UFUNCTION(BlueprintCallable)
 	AStageCell* GetCell(const TArray<int>& Location);
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	AStageCell* TryMoveX(AStageCell* FromCell, int X);
+
+	UFUNCTION(BlueprintCallable)
+	AStageCell* TryMoveY(AStageCell* FromCell, int Y);
+
+	UFUNCTION(BlueprintCallable)
+	AStageCell* FindCharacter(AActor* Actor);
 
 protected:
 
@@ -40,6 +48,8 @@ protected:
 protected:
 
 	TArray<TArray<AStageCell*>> Grid;
+
+	TMap<AActor*, AStageCell*> CharacterCells;
 
 protected:
 	UFUNCTION()

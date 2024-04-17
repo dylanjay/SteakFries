@@ -23,8 +23,8 @@ bool UGridMovement::TryMoveX(int X)
 		return false;
 	}
 
-	AStageCell* ToStageCell = nullptr;
-	if (!StageGrid->TryMoveX(StageCell, X, &ToStageCell))
+	AStageCell* ToStageCell = StageGrid->TryMoveX(StageCell, X);
+	if (StageCell == ToStageCell)
 	{
 		return false;
 	}
@@ -41,8 +41,8 @@ bool UGridMovement::TryMoveY(int Y)
 		return false;
 	}
 
-	AStageCell* ToStageCell = nullptr;
-	if (!StageGrid->TryMoveY(StageCell, Y, &ToStageCell))
+	AStageCell* ToStageCell = StageGrid->TryMoveY(StageCell, Y);
+	if (StageCell == ToStageCell)
 	{
 		return false;
 	}

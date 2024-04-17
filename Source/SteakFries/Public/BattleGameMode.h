@@ -38,6 +38,12 @@ protected:
 protected:
 
 	UFUNCTION(BlueprintCallable)
+	ACharacterSpawner* GetCharacterSpawner() const;
+
+	UFUNCTION(BlueprintCallable)
+	AStageGrid* GetStageGrid() const;
+
+	UFUNCTION(BlueprintCallable)
 	APawn* GetPlayerPawn() const;
 
 protected:

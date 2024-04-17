@@ -34,21 +34,25 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable)
 	float GetWidth() const
 	{
 		return Width;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	float GetLength() const
 	{
 		return Length;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	bool IsFilled() const
 	{
 		return FillingActor != nullptr;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	TArray<int> GetGridLocation() const
 	{
 		return GridLocation;
