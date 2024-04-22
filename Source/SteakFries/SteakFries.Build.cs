@@ -8,7 +8,9 @@ public class SteakFries : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Paper2D" });
+
+		//PublicIncludePaths.AddRange(new string[] { "Paper2D/Public", "Paper2D/Classes" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

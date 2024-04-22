@@ -4,22 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "GridMovement.generated.h"
+#include "GridMovementComponent.generated.h"
 
 // Forward Declarations
 class AStageGrid;
 class AStageCell;
 
 
-UCLASS( BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class STEAKFRIES_API UGridMovement : public UActorComponent
+UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class STEAKFRIES_API UGridMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UGridMovement();
+	UGridMovementComponent();
 
 	void Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell);
+
+	AStageCell* GetCurrentCell() const { return CurrentCell; }
+
+public:
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryMoveX(int X);
@@ -29,9 +33,9 @@ public:
 
 protected:
 
-	AStageGrid* StageGrid;
+	AStageGrid* StageGrid = nullptr;
 
-	AStageCell* StageCell;
+	AStageCell* CurrentCell = nullptr;
 
 protected:
 	virtual void BeginPlay() override;		

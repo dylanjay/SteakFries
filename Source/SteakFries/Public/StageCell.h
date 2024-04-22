@@ -14,7 +14,7 @@ class STEAKFRIES_API AStageCell : public AActor
 public:
 	AStageCell();
 
-	void Initialize(int Row, int Col);
+	void Initialize(int Col, int Row);
 
 	void Fill(AActor* Actor);
 

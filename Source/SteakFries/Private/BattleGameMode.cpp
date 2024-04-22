@@ -2,8 +2,12 @@
 
 
 #include "BattleGameMode.h"
+#include "TurnManager.h"
 #include "CharacterSpawner.h"
 #include "StageGrid.h"
+#include "StageCell.h"
+#include "GridMovementVisualizerComponent.h"
+#include "GridMovementComponent.h"
 
 ACharacterSpawner* ABattleGameMode::GetCharacterSpawner() const
 {
@@ -22,18 +26,50 @@ APawn* ABattleGameMode::GetPlayerPawn() const
 
 void ABattleGameMode::BeginPlay()
 {
+  TurnManager = GetWorld()->SpawnActor<ATurnManager>(TurnManagerClass);
+
+  TArray<AController*> Controllers;
+
+  APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+  Controllers.Add(PlayerController);
+
   CharacterSpawner = GetWorld()->SpawnActor<ACharacterSpawner>(CharacterSpawnerClass);
+  check(IsValid(CharacterSpawner));
 
   StageGrid = GetWorld()->SpawnActor<AStageGrid>(StageGridClass);
+  check(IsValid(StageGrid));
+  
+  const FVector PlayerSpawnLocation = StageGrid->GetCell(StartingPlayerLocation)->GetActorLocation();
+  PlayerPawn = CharacterSpawner->SpawnCharacterPawn(PlayerPawnClass, PlayerSpawnLocation);
+  check(IsValid(PlayerPawn));
 
-  StageGrid->Initialize(CharacterSpawner);
+  StageGrid->InitializeOnGrid(PlayerPawn, StartingPlayerLocation);
 
-  PlayerPawn = CharacterSpawner->SpawnCharacterPawn(PlayerPawnClass, StartingPlayerLocation);
+  UGridMovementVisualizerComponent* GridMovementVisualizerComp = PlayerPawn->GetComponentByClass<UGridMovementVisualizerComponent>();
+  check(IsValid(GridMovementVisualizerComp));
 
+  UGridMovementComponent* GridMovementComp = PlayerPawn->GetComponentByClass<UGridMovementComponent>();
+  check(IsValid(GridMovementComp));
+
+  GridMovementVisualizerComp->Initialize(StageGrid, GridMovementComp);
+
+  PlayerController->Possess(PlayerPawn);
+  
   if (IsValid(EnemyPawnClass))
   {
-    CharacterSpawner->SpawnCharacterPawn(EnemyPawnClass, StartingEnemyLocation);
+    const FVector EnemySpawnLocation = StageGrid->GetCell(StartingEnemyLocation)->GetActorLocation();
+    APawn* EnemyPawn = CharacterSpawner->SpawnCharacterPawn(EnemyPawnClass, EnemySpawnLocation);
+    check(IsValid(EnemyPawn));
+
+    StageGrid->InitializeOnGrid(EnemyPawn, StartingEnemyLocation);
+    
+    Controllers.Add(EnemyPawn->GetController());
   }
+  
+  TurnManager->Initialize(Controllers);
+
+  TurnManager->Start();
 
   Super::BeginPlay();
 }

@@ -8,9 +8,9 @@ AStageCell::AStageCell()
 
 }
 
-void AStageCell::Initialize(int Row, int Col)
+void AStageCell::Initialize(int Col, int Row)
 {
-	GridLocation = { Row, Col };
+	GridLocation = { Col, Row };
 }
 
 void AStageCell::Fill(AActor* Actor)

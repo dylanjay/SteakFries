@@ -8,14 +8,9 @@ ACharacterSpawner::ACharacterSpawner()
 
 }
 
-APawn* ACharacterSpawner::SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const TArray<int>& StartingLocation)
+APawn* ACharacterSpawner::SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const FVector& Location, const FRotator& Rotation)
 {
-	APawn* Pawn = GetWorld()->SpawnActor<APawn>(PawnClass, GetActorLocation(), GetActorRotation());
-
-	if (IsValid(Pawn))
-	{
-		OnCharacterPawnSpawned.Broadcast(Pawn, StartingLocation);
-	}
+	APawn* Pawn = GetWorld()->SpawnActor<APawn>(PawnClass, Location, Rotation);
 	
 	return Pawn;
 }

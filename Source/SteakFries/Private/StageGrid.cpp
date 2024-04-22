@@ -3,20 +3,83 @@
 
 #include "StageGrid.h"
 #include "StageCell.h"
-#include "CharacterSpawner.h"
-#include "GridMovement.h"
+#include "GridMovementComponent.h"
 
 AStageGrid::AStageGrid()
 {
 
 }
 
-void AStageGrid::Initialize(ACharacterSpawner* CharacterSpawner)
+bool AStageGrid::CanMoveX(AStageCell* FromCell, int X)
 {
-	if (IsValid(CharacterSpawner))
+	if (X == 0)
 	{
-		CharacterSpawner->OnCharacterPawnSpawned.AddUniqueDynamic(this, &AStageGrid::OnPlayerPawnSpawned);
+		return true;
 	}
+
+	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+
+	if ((X > 0 && CurrentLocation[0] >= Width - X) ||
+		(X < 0 && CurrentLocation[0] < -X))
+	{
+		return false;
+	}
+
+	int Direction = X > 0 ? 1 : -1;
+	TArray<int> NextCellLocation = CurrentLocation;
+	NextCellLocation[0] += Direction;
+	AStageCell* NextCell = GetCell(NextCellLocation);
+
+	while (X != 0)
+	{
+		if (NextCell->IsFilled())
+		{
+			return false;
+		}
+
+		X -= Direction;
+		CurrentLocation = NextCellLocation;
+		NextCellLocation[0] += Direction;
+		NextCell = GetCell(NextCellLocation);
+	}
+
+	return !NextCell->IsFilled();
+}
+
+bool AStageGrid::CanMoveY(AStageCell* FromCell, int Y)
+{
+	if (Y == 0)
+	{
+		return true;
+	}
+
+	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+
+	if ((Y > 0 && CurrentLocation[1] >= Height - Y) ||
+		(Y < 0 && CurrentLocation[1] < -Y ))
+	{
+		return false;
+	}
+
+	int Direction = Y > 0 ? 1 : -1;
+	TArray<int> NextCellLocation = CurrentLocation;
+	NextCellLocation[1] += Direction;
+	AStageCell* NextCell = GetCell(NextCellLocation);
+
+	while (Y != 0)
+	{
+		if (NextCell->IsFilled())
+		{
+			return false;
+		}
+
+		Y -= Direction;
+		CurrentLocation = NextCellLocation;
+		NextCellLocation[1] += Direction;
+		NextCell = GetCell(NextCellLocation);
+	}
+
+	return !NextCell->IsFilled();
 }
 
 AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
@@ -26,34 +89,34 @@ AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 		return FromCell;
 	}
 
-	TArray<int> CurCellLocation = FromCell->GetGridLocation();
+	TArray<int> CurrentLocation = FromCell->GetGridLocation();
 
-	if ((X > 0 && CurCellLocation[1] == Width - 1) ||
-		(X < 0 && CurCellLocation[1] == 0))
+	if ((X > 0 && CurrentLocation[0] >= Width - X) ||
+		(X < 0 && CurrentLocation[0] < -X))
 	{
 		return FromCell;
 	}
 
 	int Direction = X > 0 ? 1 : -1;
-	TArray<int> NextCellLocation = CurCellLocation;
-	NextCellLocation[1] += Direction;
-	AStageCell* NextCell = GetCell(NextCellLocation);
+	TArray<int> NextLocation = CurrentLocation;
+	NextLocation[0] += Direction;
+	AStageCell* NextCell = GetCell(NextLocation);
 
 	if (NextCell->IsFilled())
 	{
 		return FromCell;
 	}
 
-	while (X != 0 && NextCellLocation[1] < Width && NextCellLocation[1] >= 0 && !NextCell->IsFilled())
+	while (X != 0 && NextLocation[0] < Width && NextLocation[0] >= 0 && !NextCell->IsFilled())
 	{
 		X -= Direction;
-		CurCellLocation = NextCellLocation;
-		NextCellLocation[1] += Direction;
-		NextCell = GetCell(NextCellLocation);
+		CurrentLocation = NextLocation;
+		NextLocation[0] += Direction;
+		NextCell = GetCell(NextLocation);
 	}
 
 	AActor* Actor = FromCell->Empty();
-	AStageCell* CurCell = GetCell(CurCellLocation);
+	AStageCell* CurCell = GetCell(CurrentLocation);
 	CurCell->Fill(Actor);
 
 	CharacterCells[Actor] = CurCell;
@@ -68,34 +131,34 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 		return FromCell;
 	}
 
-	TArray<int> CurCellLocation = FromCell->GetGridLocation();
+	TArray<int> CurrentLocation = FromCell->GetGridLocation();
 
-	if ((Y > 0 && CurCellLocation[0] == 0) ||
-		(Y < 0 && CurCellLocation[0] == Height - 1))
+	if ((Y > 0 && CurrentLocation[1] >= Height - Y) ||
+		(Y < 0 && CurrentLocation[1] < -Y))
 	{
 		return FromCell;
 	}
 
-	int Direction = Y > 0 ? -1 : 1;
-	TArray<int> NextCellLocation = CurCellLocation;
-	NextCellLocation[0] += Direction;
-	AStageCell* NextCell = GetCell(NextCellLocation);
+	int Direction = Y > 0 ? 1 : -1;
+	TArray<int> NextLocation = CurrentLocation;
+	NextLocation[1] += Direction;
+	AStageCell* NextCell = GetCell(NextLocation);
 
 	if (NextCell->IsFilled())
 	{
 		return FromCell;
 	}
 
-	while (Y != 0 && NextCellLocation[0] < Height && NextCellLocation[0] >= 0 && !NextCell->IsFilled())
+	while (Y != 0 && NextLocation[1] < Height && NextLocation[1] >= 0 && !NextCell->IsFilled())
 	{
-		Y += Direction;
-		CurCellLocation = NextCellLocation;
-		NextCellLocation[0] += Direction;
-		NextCell = GetCell(NextCellLocation);
+		Y -= Direction;
+		CurrentLocation = NextLocation;
+		NextLocation[1] += Direction;
+		NextCell = GetCell(NextLocation);
 	}
 
 	AActor* Actor = FromCell->Empty();
-	AStageCell* CurCell = GetCell(CurCellLocation);
+	AStageCell* CurCell = GetCell(CurrentLocation);
 	CurCell->Fill(Actor);
 
 	CharacterCells[Actor] = CurCell;
@@ -115,16 +178,11 @@ AStageCell* AStageGrid::FindCharacter(AActor* Actor)
 
 AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {
-	if (Location[0] >= 0 && Location[0] < Height && Location[1] >= 0 && Location[1] < Width)
+	if (Location[0] >= 0 && Location[0] < Width && Location[1] >= 0 && Location[1] < Height)
 	{
 		return Grid[Location[0]][Location[1]];
 	}
 	return nullptr;
-}
-
-void AStageGrid::OnPlayerPawnSpawned(APawn* PlayerPawn, const TArray<int>& StartingLocation)
-{
-	InitializeOnGrid(PlayerPawn, StartingLocation);
 }
 
 bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation)
@@ -134,23 +192,19 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocati
 		return false;
 	}
 
-	UGridMovement* GridMovementComp = Pawn->GetComponentByClass<UGridMovement>();
-
-	if (!IsValid(GridMovementComp))
-	{
-		return false;
-	}
+	UGridMovementComponent* GridMovementComp = Pawn->GetComponentByClass<UGridMovementComponent>();
+	check(IsValid(GridMovementComp));
 
 	AStageCell* StageCell = GetCell(StartingLocation);
+	check(IsValid(StageCell));
 
-	if (!IsValid(StageCell) || StageCell->IsFilled())
+	if (StageCell->IsFilled())
 	{
 		return false;
 	}
 
 	CharacterCells.Add(Pawn, StageCell);
 
-	Pawn->SetActorLocation(StageCell->GetActorLocation());
 	StageCell->Fill(Pawn);
 	
 	GridMovementComp->Initialize(this, StageCell);
@@ -163,45 +217,45 @@ void AStageGrid::CreateGrid()
 	FRotator Rotation = GetActorRotation();
 
 	AStageCell* FirstCell = GetWorld()->SpawnActor<AStageCell>(StageCellClass, GetActorLocation(), Rotation);
+	check(IsValid(FirstCell));
 
 	float CellLength = FirstCell->GetLength();
 	float CellWidth = FirstCell->GetWidth();
 
-	FirstCell->SetActorRelativeLocation(FVector(-CellLength / 2.0f, 0.0f, 0.0f));
+	FirstCell->SetActorRelativeLocation(FVector(-CellLength / 2.0f, CellWidth / 2.0f, 0.0f));
 
 	FVector CellLocation = FirstCell->GetActorLocation();
 
-	float OriginCellY = CellLocation.Y + CellWidth / 2.0f;
+	float OriginCellX = CellLocation.X;
 
-	for (int rowIndex = 0; rowIndex < Height; rowIndex++)
+	for (int colIndex = 0; colIndex < Width; colIndex++)
 	{
-		CellLocation.Y = OriginCellY;
+		CellLocation.X = OriginCellX;
 
-		TArray<AStageCell*> Row;
+		TArray<AStageCell*> Col;
 
-		for (int colIndex = 0; colIndex < Width; colIndex++)
+		for (int rowIndex = 0; rowIndex < Width; rowIndex++)
 		{
 			AStageCell* Cell;
-			if (rowIndex == 0 && colIndex == 0)
+			if (colIndex == 0 && rowIndex == 0)
 			{
 				Cell = FirstCell;
-				Cell->SetActorLocation(CellLocation);
 			}
 			else
 			{
 				Cell = GetWorld()->SpawnActor<AStageCell>(StageCellClass, CellLocation, Rotation);
 			}
 
-			Cell->Initialize(rowIndex, colIndex);
+			Cell->Initialize(colIndex, rowIndex);
 
-			CellLocation.Y += CellWidth;
+			CellLocation.X += CellLength;
 
-			Row.Add(Cell);
+			Col.Add(Cell);
 		}
 
-		CellLocation.X -= CellLength;
+		CellLocation.Y += CellWidth;
 
-		Grid.Add(Row);
+		Grid.Add(Col);
 	}
 }
 

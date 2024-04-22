@@ -8,7 +8,6 @@
 
 // Forward Declarations
 class AStageCell;
-class ACharacterSpawner;
 
 UCLASS()
 class STEAKFRIES_API AStageGrid : public AActor
@@ -18,20 +17,27 @@ class STEAKFRIES_API AStageGrid : public AActor
 public:	
 	AStageGrid();
 
-	void Initialize(ACharacterSpawner* CharacterSpawner);
+	bool InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation);
 
-	UFUNCTION(BlueprintCallable)
-	AStageCell* GetCell(const TArray<int>& Location);
 
 public:
 
 	UFUNCTION(BlueprintCallable)
+	AStageCell* GetCell(const TArray<int>& Location);
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	bool CanMoveX(AStageCell* FromCell, int X);
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	bool CanMoveY(AStageCell* FromCell, int Y);
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	AStageCell* TryMoveX(AStageCell* FromCell, int X);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	AStageCell* TryMoveY(AStageCell* FromCell, int Y);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	AStageCell* FindCharacter(AActor* Actor);
 
 protected:
@@ -52,10 +58,6 @@ protected:
 	TMap<AActor*, AStageCell*> CharacterCells;
 
 protected:
-	UFUNCTION()
-	void OnPlayerPawnSpawned(APawn* PlayerPawn, const TArray<int>& StartingLocation);
-
-	bool InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation);
 
 	void CreateGrid();
 

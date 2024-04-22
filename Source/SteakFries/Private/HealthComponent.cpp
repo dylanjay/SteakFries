@@ -1,28 +1,27 @@
-#include "Health.h"
 // All rights reserved
 
 
-#include "Health.h"
+#include "HealthComponent.h"
 
-UHealth::UHealth()
+UHealthComponent::UHealthComponent()
 {
 	CurrentHealth = MaxHealth;
 }
 
 
-void UHealth::DealFlatDamage(float damageAmount)
+void UHealthComponent::DealFlatDamage(float damageAmount)
 {
 	CurrentHealth -= damageAmount;
 
 	CheckDead();
 }
 
-void UHealth::DealPercentageDamage(float damageAmount)
+void UHealthComponent::DealPercentageDamage(float damageAmount)
 {
 	DealFlatDamage(MaxHealth * damageAmount);
 }
 
-void UHealth::HealFlatHealth(float healAmount)
+void UHealthComponent::HealFlatHealth(float healAmount)
 {
 	CurrentHealth = std::clamp(CurrentHealth + healAmount, 0.0f, MaxHealth);
 
@@ -32,19 +31,19 @@ void UHealth::HealFlatHealth(float healAmount)
 	}
 }
 
-void UHealth::HealPercentageHealth(float healAmount)
+void UHealthComponent::HealPercentageHealth(float healAmount)
 {
 	HealFlatHealth(MaxHealth * healAmount);
 }
 
 
-void UHealth::BeginPlay()
+void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void UHealth::CheckDead()
+void UHealthComponent::CheckDead()
 {
 	if (OnDeath.IsBound() && CurrentHealth <= 0.0f)
 	{

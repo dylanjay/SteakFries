@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "CharacterSpawner.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCharacterPawnSpawned, APawn*, PlayerPawn, const TArray<int>&, StartLocation);
 
 UCLASS()
 class STEAKFRIES_API ACharacterSpawner : public AActor
@@ -16,10 +15,8 @@ class STEAKFRIES_API ACharacterSpawner : public AActor
 public:	
 	ACharacterSpawner();
 
-	FOnCharacterPawnSpawned OnCharacterPawnSpawned;
-
 public:
-	APawn* SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const TArray<int>& StartingLocation);
+	APawn* SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator);
 
 protected:
 	virtual void BeginPlay() override;
