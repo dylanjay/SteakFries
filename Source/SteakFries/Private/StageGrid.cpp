@@ -38,6 +38,12 @@ bool AStageGrid::CanMoveX(AStageCell* FromCell, int X)
 		}
 
 		X -= Direction;
+
+		if (X == 0)
+		{
+			break;
+		}
+
 		CurrentLocation = NextCellLocation;
 		NextCellLocation[0] += Direction;
 		NextCell = GetCell(NextCellLocation);
@@ -74,6 +80,12 @@ bool AStageGrid::CanMoveY(AStageCell* FromCell, int Y)
 		}
 
 		Y -= Direction;
+
+		if (Y == 0)
+		{
+			break;
+		}
+
 		CurrentLocation = NextCellLocation;
 		NextCellLocation[1] += Direction;
 		NextCell = GetCell(NextCellLocation);

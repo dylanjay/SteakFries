@@ -28,9 +28,10 @@ public:
 
 	void Initialize(AStageGrid* InStageGrid, UGridMovementComponent* InGridMovementComp);
 
-	void Reset();
-
 public:
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	void Reset();
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryMoveUp();
