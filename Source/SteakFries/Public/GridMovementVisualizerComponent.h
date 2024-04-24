@@ -49,7 +49,7 @@ public:
 	TArray<UPathEdge*> GetPath() const { return Path; }
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	void ConfirmPath();
+	void WalkPath();
 
 protected:
 
@@ -57,16 +57,12 @@ protected:
 
 protected:
 
-	UPROPERTY()
-	AStageCell* CurrentCell;
+	AStageCell* CurrentCell = nullptr;
 
-	UPROPERTY()
-	AStageGrid* StageGrid;
+	AStageGrid* StageGrid = nullptr;
 
-	UPROPERTY()
-	UGridMovementComponent* GridMovementComp;
+	UGridMovementComponent* GridMovementComp = nullptr;
 
-	UPROPERTY()
 	TArray<UPathEdge*> Path;
 
 };

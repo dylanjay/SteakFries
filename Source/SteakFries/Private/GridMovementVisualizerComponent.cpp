@@ -162,24 +162,24 @@ bool UGridMovementVisualizerComponent::TryMoveRight()
 	return false;
 }
 
-void UGridMovementVisualizerComponent::ConfirmPath()
+void UGridMovementVisualizerComponent::WalkPath()
 {
 	if (Path.IsEmpty())
 	{
 		return;
 	}
 
-	for (UPathEdge* Edge : Path)
-	{
-		check(IsValid(Edge));
-		check(IsValid(Edge->To));
-		if (!GridMovementComp->TryMoveToCell(Edge->To))
-		{
-			return;
-		}
-	}
+	UPathEdge* Head = Path[0];
 
-	Reset();
+	check(IsValid(Head));
+	check(IsValid(Head->To));
+	check(IsValid(GridMovementComp));
+
+	if (GridMovementComp->TryMoveToCell(Head->To))
+	{
+		Head->Cleanup();
+		Path.RemoveAt(0);
+	}
 }
 
 void UGridMovementVisualizerComponent::BeginPlay()
