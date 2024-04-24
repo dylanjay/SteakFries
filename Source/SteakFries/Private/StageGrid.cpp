@@ -192,7 +192,9 @@ AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {
 	if (Location[0] >= 0 && Location[0] < Width && Location[1] >= 0 && Location[1] < Height)
 	{
-		return Grid[Location[0]][Location[1]];
+		AStageCell* Cell = Grid[Location[0]][Location[1]];
+		check(IsValid(Cell));
+		return Cell;
 	}
 	return nullptr;
 }

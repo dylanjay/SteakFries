@@ -26,6 +26,9 @@ public:
 public:
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	bool TryMoveToCell(AStageCell* ToCell);
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryMoveX(int X);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
@@ -36,6 +39,8 @@ protected:
 	AStageGrid* StageGrid = nullptr;
 
 	AStageCell* CurrentCell = nullptr;
+
+	const FVector LOCATION_OFFSET = FVector(0.0f, 0.0f, 5.0f);
 
 protected:
 	virtual void BeginPlay() override;		

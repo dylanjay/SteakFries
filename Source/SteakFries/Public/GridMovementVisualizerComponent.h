@@ -45,6 +45,12 @@ public:
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryMoveRight();
 
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	TArray<UPathEdge*> GetPath() const { return Path; }
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	void ConfirmPath();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -61,6 +67,36 @@ protected:
 	UGridMovementComponent* GridMovementComp;
 
 	UPROPERTY()
-	TArray<AActor*> Arrows;
+	TArray<UPathEdge*> Path;
 
+};
+
+UCLASS()
+class STEAKFRIES_API UPathEdge : public UObject
+{
+	GENERATED_BODY()
+
+public:
+
+	AActor* Arrow = nullptr;
+
+	AStageCell* From = nullptr;
+	AStageCell* To = nullptr;
+
+public:
+
+	void Initialize(AActor* InArrow, AStageCell* InFrom, AStageCell* InTo)
+	{
+		Arrow = InArrow;
+		From = InFrom;
+		To = InTo;
+	};
+
+	void Cleanup()
+	{
+		if (IsValid(Arrow))
+		{
+			Arrow->Destroy();
+		}
+	}
 };

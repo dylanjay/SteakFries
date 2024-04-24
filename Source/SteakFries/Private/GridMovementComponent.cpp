@@ -16,6 +16,37 @@ void UGridMovementComponent::Initialize(AStageGrid* InStageGrid, AStageCell* InS
 	CurrentCell = InStageCell;
 }
 
+bool UGridMovementComponent::TryMoveToCell(AStageCell* ToCell)
+{
+	check(IsValid(ToCell));
+	check(IsValid(CurrentCell));
+
+	const TArray<int>& FromLocation = CurrentCell->GetGridLocation();
+	const TArray<int>& ToLocation = ToCell->GetGridLocation();
+
+	if (FromLocation == ToLocation)
+	{
+		return true;
+	}
+
+	// cannot move diagonally
+	if (FromLocation[0] != ToLocation[0] && FromLocation[1] != ToLocation[1])
+	{
+		return false;
+	}
+
+	if (FromLocation[0] != ToLocation[0])
+	{
+		return TryMoveX(ToLocation[0] - FromLocation[0]);
+	}
+	else
+	{
+		return TryMoveY(ToLocation[1] - FromLocation[1]);
+	}
+
+	return false;
+}
+
 bool UGridMovementComponent::TryMoveX(int X)
 {
 	if (X == 0)
@@ -30,7 +61,7 @@ bool UGridMovementComponent::TryMoveX(int X)
 	}
 	check(IsValid(ToStageCell));
 	CurrentCell = ToStageCell;
-	GetOwner()->SetActorLocation(CurrentCell->GetActorLocation());
+	GetOwner()->SetActorLocation(CurrentCell->GetActorLocation() + LOCATION_OFFSET);
 	return true;
 }
 
@@ -48,7 +79,7 @@ bool UGridMovementComponent::TryMoveY(int Y)
 	}
 	check(IsValid(ToStageCell));
 	CurrentCell = ToStageCell;
-	GetOwner()->SetActorLocation(CurrentCell->GetActorLocation());
+	GetOwner()->SetActorLocation(CurrentCell->GetActorLocation() + LOCATION_OFFSET);
 	return true;
 }
 
