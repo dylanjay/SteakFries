@@ -3,11 +3,6 @@
 
 #include "StageCell.h"
 
-AStageCell::AStageCell()
-{
-
-}
-
 void AStageCell::Initialize(int Col, int Row)
 {
 	GridLocation = { Col, Row };

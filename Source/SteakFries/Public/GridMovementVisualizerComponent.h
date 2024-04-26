@@ -17,14 +17,7 @@ class STEAKFRIES_API UGridMovementVisualizerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> ArrowClass;
-
 public:	
-
-	UGridMovementVisualizerComponent();
 
 	void Initialize(AStageGrid* InStageGrid, UGridMovementComponent* InGridMovementComp);
 
@@ -54,6 +47,11 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> ArrowClass;
 
 protected:
 

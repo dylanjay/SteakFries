@@ -16,6 +16,20 @@ class STEAKFRIES_API UHealthComponent : public UActorComponent, public IDamageab
 {
 	GENERATED_BODY()
 
+public:
+
+	UFUNCTION(BlueprintCallable)
+	virtual void DealFlatDamage(float damageAmount) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void DealPercentageDamage(float damageAmount) override;
+
+	UFUNCTION(BlueprintCallable)
+	void HealFlatHealth(float healAmount);
+
+	UFUNCTION(BlueprintCallable)
+	void HealPercentageHealth(float healAmount);
+
 public:	
 	// Sets default values for this component's properties
 	UHealthComponent();
@@ -32,24 +46,9 @@ protected:
 
 	float CurrentHealth = 0.0f;
 
-public:
-
-	UFUNCTION(BlueprintCallable)
-	virtual void DealFlatDamage(float damageAmount) override;
-
-	UFUNCTION(BlueprintCallable)
-	virtual void DealPercentageDamage(float damageAmount) override;
-
-	UFUNCTION(BlueprintCallable)
-	void HealFlatHealth(float healAmount);
-
-	UFUNCTION(BlueprintCallable)
-	void HealPercentageHealth(float healAmount);
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	void CheckDead();
-
 };

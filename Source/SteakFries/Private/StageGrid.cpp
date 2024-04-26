@@ -5,11 +5,6 @@
 #include "StageCell.h"
 #include "GridMovementComponent.h"
 
-AStageGrid::AStageGrid()
-{
-
-}
-
 bool AStageGrid::CanMoveX(AStageCell* FromCell, int X)
 {
 	if (X == 0)

@@ -5,11 +5,6 @@
 #include "PaperFlipbookComponent.h"
 
 
-ATurnManager::ATurnManager()
-{
-
-}
-
 void ATurnManager::Initialize(TArray<AController*> Controllers)
 {
 	for (AController* Controller : Controllers)

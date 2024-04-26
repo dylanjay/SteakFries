@@ -15,10 +15,8 @@ class STEAKFRIES_API AStageGrid : public AActor
 	GENERATED_BODY()
 	
 public:	
-	AStageGrid();
 
 	bool InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation);
-
 
 public:
 

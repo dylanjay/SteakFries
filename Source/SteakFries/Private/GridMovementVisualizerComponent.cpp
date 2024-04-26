@@ -6,9 +6,6 @@
 #include "StageGrid.h"
 #include "GridMovementComponent.h"
 
-UGridMovementVisualizerComponent::UGridMovementVisualizerComponent()
-{
-}
 
 void UGridMovementVisualizerComponent::Initialize(AStageGrid* InStageGrid, UGridMovementComponent* InGridMovementComp)
 {

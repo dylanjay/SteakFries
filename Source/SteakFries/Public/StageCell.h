@@ -12,7 +12,6 @@ class STEAKFRIES_API AStageCell : public AActor
 	GENERATED_BODY()
 
 public:
-	AStageCell();
 
 	void Initialize(int Col, int Row);
 

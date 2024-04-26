@@ -14,14 +14,8 @@ UCLASS()
 class STEAKFRIES_API ATurnManager : public AActor
 {
 	GENERATED_BODY()
-
-public:
-
-	TQueue<AController*> TurnQueue;
 	
 public:	
-
-	ATurnManager();
 
 	void Initialize(TArray<AController*> Controllers);
 
@@ -39,6 +33,7 @@ protected:
 
 protected:
 
-	AController* CurrentTurn = nullptr;
+	TQueue<AController*> TurnQueue;
 
+	AController* CurrentTurn = nullptr;
 };

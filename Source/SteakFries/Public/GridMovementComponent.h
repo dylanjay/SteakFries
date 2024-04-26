@@ -16,8 +16,7 @@ class STEAKFRIES_API UGridMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	UGridMovementComponent();
+public:
 
 	void Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell);
 

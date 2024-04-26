@@ -5,11 +5,6 @@
 #include "StageGrid.h"
 #include "StageCell.h"
 
-UGridMovementComponent::UGridMovementComponent()
-{
-
-}
-
 void UGridMovementComponent::Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell)
 {
 	StageGrid = InStageGrid;
