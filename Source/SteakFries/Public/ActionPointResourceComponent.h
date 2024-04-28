@@ -21,7 +21,13 @@ public:
 	void Reset();
 
 	UFUNCTION(BlueprintCallable)
+	bool CanAfford(float Amount) const { return CurrentActionPoints >= Amount;  }
+
+	UFUNCTION(BlueprintCallable)
 	bool TryConsume(float Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void Refund(float Amount);
 
 public:	
 	UActionPointResourceComponent();
@@ -34,5 +40,5 @@ protected:
 
 	float MaxActionPoints = 10.0f;
 
-	float CurrentActionPoints = 0.0f;
+	float CurrentActionPoints = 10.0f;
 };

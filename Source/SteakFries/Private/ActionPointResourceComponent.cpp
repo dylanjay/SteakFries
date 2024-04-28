@@ -28,3 +28,8 @@ bool UActionPointResourceComponent::TryConsume(float Amount)
 
 	return true;
 }
+
+void UActionPointResourceComponent::Refund(float Amount)
+{
+	CurrentActionPoints = FMath::Clamp(CurrentActionPoints + Amount, 0.0f, MaxActionPoints);
+}

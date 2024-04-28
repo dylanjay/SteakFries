@@ -44,7 +44,7 @@ protected:
 
 	float MaxHealth = 100.0f;
 
-	float CurrentHealth = 0.0f;
+	float CurrentHealth = 100.0f;
 
 protected:
 	// Called when the game starts

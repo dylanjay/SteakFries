@@ -8,6 +8,8 @@
 #include "StageCell.h"
 #include "GridMovementVisualizerComponent.h"
 #include "GridMovementComponent.h"
+#include "ActionScriptGeneratorComponent.h"
+#include "ActionPointResourceComponent.h"
 
 ACharacterSpawner* ABattleGameMode::GetCharacterSpawner() const
 {
@@ -52,7 +54,12 @@ void ABattleGameMode::BeginPlay()
   UGridMovementComponent* GridMovementComp = PlayerPawn->GetComponentByClass<UGridMovementComponent>();
   check(IsValid(GridMovementComp));
 
-  GridMovementVisualizerComp->Initialize(StageGrid, GridMovementComp);
+  UActionPointResourceComponent* ActionPointResourceComp = PlayerPawn->GetComponentByClass<UActionPointResourceComponent>();
+
+  UActionScriptGeneratorComponent* ActionScriptGeneratorComp = PlayerPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
+  ActionScriptGeneratorComp->Initialize(ActionPointResourceComp, GridMovementComp, StageGrid);
+
+  GridMovementVisualizerComp->Initialize(ActionScriptGeneratorComp);
 
   PlayerController->Possess(PlayerPawn);
   

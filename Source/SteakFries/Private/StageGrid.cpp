@@ -183,6 +183,21 @@ AStageCell* AStageGrid::FindCharacter(AActor* Actor)
 	return CharacterCells[Actor];
 }
 
+bool AStageGrid::IsValidLocation(const TArray<int>& Location) const
+{
+	if (Location[0] < 0 || Location[0] >= Width)
+	{
+		return false;
+	}
+
+	if (Location[1] < 0 || Location[1] >= Height)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
 {
 	if (Location[0] >= 0 && Location[0] < Width && Location[1] >= 0 && Location[1] < Height)

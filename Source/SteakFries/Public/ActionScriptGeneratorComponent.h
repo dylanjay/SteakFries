@@ -6,22 +6,51 @@
 #include "Components/ActorComponent.h"
 #include "ActionScriptGeneratorComponent.generated.h"
 
+class UAction;
+class UActionPointResourceComponent;
+class UGridMovementComponent;
+class AStageCell;
+class AStageGrid;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionAdded, UAction*, Action);
+
+
+UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STEAKFRIES_API UActionScriptGeneratorComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+public:
+
+	FOnActionAdded OnActionAdded;
+
+public:
+
+	void Initialize(UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid);
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void Reset();
+
+	UFUNCTION(BlueprintCallable)
+	bool TryAddAction(UAction* Action);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryRemoveEnd();
 
 protected:
 	virtual void BeginPlay() override;
 
 protected:
 
-	// TODO: TEMPORARY
+	UActionPointResourceComponent* ActionPoints = nullptr;
 
-	float MoveActionCost = 1.0f;
+	UGridMovementComponent* GridMovement = nullptr;
 
-	float AttackActionCost = 4.0f;
+	AStageGrid* StageGrid = nullptr;
 
-	// TEMPORARY
+	TArray<UAction*> Script;
+
+	AStageCell* CurrentCell;
 };

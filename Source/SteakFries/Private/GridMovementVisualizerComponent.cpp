@@ -2,181 +2,66 @@
 
 
 #include "GridMovementVisualizerComponent.h"
+#include "ActionScriptGeneratorComponent.h"
+#include "MoveAction.h"
 #include "StageCell.h"
-#include "StageGrid.h"
-#include "GridMovementComponent.h"
 
 
-void UGridMovementVisualizerComponent::Initialize(AStageGrid* InStageGrid, UGridMovementComponent* InGridMovementComp)
+void UGridMovementVisualizerComponent::Initialize(UActionScriptGeneratorComponent* InActionScriptGenerator)
 {
-	check(IsValid(InStageGrid));
-	check(IsValid(InGridMovementComp));
+	check(IsValid(InActionScriptGenerator));
 
-	StageGrid = InStageGrid;
-	GridMovementComp = InGridMovementComp;
-
-	Reset();
+	ActionScriptGenerator = InActionScriptGenerator;
+	ActionScriptGenerator->OnActionAdded.AddUniqueDynamic(this, &UGridMovementVisualizerComponent::OnScriptActionAdded);
 }
 
 void UGridMovementVisualizerComponent::Reset()
 {
-	check(IsValid(GridMovementComp));
-	CurrentCell = GridMovementComp->GetCurrentCell();
-
-	for (int i = Path.Num() - 1; i >= 0; i--)
+	for (int i = Arrows.Num() - 1; i >= 0; i--)
 	{
-		check(IsValid(Path[i]));
-		Path[i]->Cleanup();
+		check(IsValid(Arrows[i]));
+
+		GetWorld()->DestroyActor(Arrows[i]);
 	}
-	Path.Empty();
 }
 
-bool UGridMovementVisualizerComponent::TryMoveUp()
+void UGridMovementVisualizerComponent::OnScriptActionAdded(UAction* Action)
 {
-	check(IsValid(CurrentCell));
+	check(IsValid(Action));
 
-	if (StageGrid->CanMoveY(CurrentCell, 1))
-	{
-		TArray<int> CurrentLocation = CurrentCell->GetGridLocation();
-		TArray<int> Up = CurrentLocation;
-		Up[1]++;
-
-		AStageCell* UpCell = StageGrid->GetCell(Up);
-
-		FTransform ArrowTransform;
-		FVector ArrowLocation = (UpCell->GetActorLocation() + CurrentCell->GetActorLocation()) / 2;
-		ArrowTransform.SetComponents(FQuat::Identity, ArrowLocation, FVector::OneVector);
-		AActor* Arrow = GetWorld()->SpawnActor(ArrowClass, &ArrowTransform);
-		check(IsValid(Arrow));
-
-		UPathEdge* PathEdge = NewObject<UPathEdge>();
-		check(IsValid(PathEdge));
-
-		PathEdge->Initialize(Arrow, CurrentCell, UpCell);
-		Path.Add(PathEdge);
-
-		CurrentCell = UpCell;
-
-		return true;
-	}
-
-	return false;
-}
-
-bool UGridMovementVisualizerComponent::TryMoveDown()
-{
-	check(IsValid(CurrentCell));
-
-	if (StageGrid->CanMoveY(CurrentCell, -1))
-	{
-		TArray<int> CurrentLocation = CurrentCell->GetGridLocation();
-		TArray<int> Down = CurrentLocation;
-		Down[1]--;
-
-		AStageCell* DownCell = StageGrid->GetCell(Down);
-
-		FTransform ArrowTransform;
-		FVector ArrowLocation = (DownCell->GetActorLocation() + CurrentCell->GetActorLocation()) / 2;
-		ArrowTransform.SetComponents(FQuat::FindBetweenNormals(FVector::ForwardVector, FVector::BackwardVector), ArrowLocation, FVector::OneVector);
-		AActor* Arrow = GetWorld()->SpawnActor(ArrowClass, &ArrowTransform);
-		check(IsValid(Arrow));
-
-		UPathEdge* PathEdge = NewObject<UPathEdge>();
-		check(IsValid(PathEdge));
-		
-		PathEdge->Initialize(Arrow, CurrentCell, DownCell);
-		Path.Add(PathEdge);
-
-		CurrentCell = DownCell;
-
-		return true;
-	}
-
-	return false;
-}
-
-bool UGridMovementVisualizerComponent::TryMoveLeft()
-{
-	check(IsValid(CurrentCell));
-
-	if (StageGrid->CanMoveX(CurrentCell, -1))
-	{
-		TArray<int> CurrentLocation = CurrentCell->GetGridLocation();
-		TArray<int> Left = CurrentLocation;
-		Left[0]--;
-
-		AStageCell* LeftCell = StageGrid->GetCell(Left);
-
-		FTransform ArrowTransform;
-		FVector ArrowLocation = (LeftCell->GetActorLocation() + CurrentCell->GetActorLocation()) / 2;
-		ArrowTransform.SetComponents(FQuat::FindBetweenNormals(FVector::ForwardVector, FVector::LeftVector), ArrowLocation, FVector::OneVector);
-		AActor* Arrow = GetWorld()->SpawnActor(ArrowClass, &ArrowTransform);
-		check(IsValid(Arrow));
-
-		UPathEdge* PathEdge = NewObject<UPathEdge>();
-		check(IsValid(PathEdge));
-
-		PathEdge->Initialize(Arrow, CurrentCell, LeftCell);
-		Path.Add(PathEdge);
-
-		CurrentCell = LeftCell;
-
-		return true;
-	}
-
-	return false;
-}
-
-bool UGridMovementVisualizerComponent::TryMoveRight()
-{
-	check(IsValid(CurrentCell));
-
-	if (StageGrid->CanMoveX(CurrentCell, 1))
-	{
-		TArray<int> CurrentLocation = CurrentCell->GetGridLocation();
-		TArray<int> Right = CurrentLocation;
-		Right[0]++;
-
-		AStageCell* RightCell = StageGrid->GetCell(Right);
-
-		FTransform ArrowTransform;
-		FVector ArrowLocation = (RightCell->GetActorLocation() + CurrentCell->GetActorLocation()) / 2;
-		ArrowTransform.SetComponents(FQuat::FindBetweenNormals(FVector::ForwardVector, FVector::RightVector), ArrowLocation, FVector::OneVector);
-		AActor* Arrow = GetWorld()->SpawnActor(ArrowClass, &ArrowTransform);
-		check(IsValid(Arrow));
-
-		UPathEdge* PathEdge = NewObject<UPathEdge>();
-		check(IsValid(PathEdge));
-
-		PathEdge->Initialize(Arrow, CurrentCell, RightCell);
-		Path.Add(PathEdge);
-
-		CurrentCell = RightCell;
-
-		return true;
-	}
-
-	return false;
-}
-
-void UGridMovementVisualizerComponent::WalkPath()
-{
-	if (Path.IsEmpty())
+	if (!Action->IsA(UMoveAction::StaticClass()))
 	{
 		return;
 	}
 
-	UPathEdge* Head = Path[0];
+	UMoveAction* MoveAction = Cast<UMoveAction>(Action);
 
-	check(IsValid(Head));
-	check(IsValid(Head->To));
-	check(IsValid(GridMovementComp));
+	FTransform ArrowTransform;
+	FVector ArrowLocation = (MoveAction->From->GetActorLocation() + MoveAction->To->GetActorLocation()) / 2;
 
-	if (GridMovementComp->TryMoveToCell(Head->To))
+	FVector ArrowNormal;
+	if (MoveAction->X > 0)
 	{
-		Head->Cleanup();
-		Path.RemoveAt(0);
+		ArrowNormal = FVector::RightVector;
 	}
+	else if (MoveAction->X < 0)
+	{
+		ArrowNormal = FVector::LeftVector;
+	}
+	else if (MoveAction->Y < 0)
+	{
+		ArrowNormal = FVector::BackwardVector;
+	}
+	else
+	{
+		ArrowNormal = FVector::ForwardVector;
+	}
+
+	FQuat ArrowRotation = FQuat::FindBetweenNormals(FVector::ForwardVector, ArrowNormal);
+	ArrowTransform.SetComponents(ArrowRotation, ArrowLocation, FVector::OneVector);
+	AActor* Arrow = GetWorld()->SpawnActor(ArrowClass, &ArrowTransform);
+	check(IsValid(Arrow));
+	Arrows.Add(Arrow);
 }
 
 void UGridMovementVisualizerComponent::BeginPlay()

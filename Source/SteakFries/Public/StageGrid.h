@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	AStageCell* FindCharacter(AActor* Actor);
 
+	UFUNCTION(BlueprintCallable)
+	bool IsValidLocation(const TArray<int>& Location) const;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
