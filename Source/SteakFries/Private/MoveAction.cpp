@@ -4,7 +4,7 @@
 #include "MoveAction.h"
 #include "StageCell.h"
 
-void UMoveAction::FillEdgeData(AStageCell* InFrom, AStageCell* InTo)
+void AMoveAction::FillEdgeData(AStageCell* InFrom, AStageCell* InTo)
 {
   check(IsValid(InFrom));
   check(IsValid(InTo));

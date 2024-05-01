@@ -10,7 +10,7 @@ class AStageCell;
 
 
 UCLASS()
-class STEAKFRIES_API UMoveAction : public UAction
+class STEAKFRIES_API AMoveAction : public AAction
 {
 	GENERATED_BODY()
 

@@ -6,13 +6,14 @@
 #include "Components/ActorComponent.h"
 #include "ActionScriptGeneratorComponent.generated.h"
 
-class UAction;
+class AAction;
 class UActionPointResourceComponent;
 class UGridMovementComponent;
 class AStageCell;
 class AStageGrid;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionAdded, UAction*, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionAdded, AAction*, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReset);
 
 
 UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,6 +25,8 @@ public:
 
 	FOnActionAdded OnActionAdded;
 
+	FOnReset OnReset;
+
 public:
 
 	void Initialize(UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid);
@@ -34,10 +37,13 @@ public:
 	void Reset();
 
 	UFUNCTION(BlueprintCallable)
-	bool TryAddAction(UAction* Action);
+	bool TryAddAction(AAction* Action);
 
 	UFUNCTION(BlueprintCallable)
 	bool TryRemoveEnd();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AAction*> GetScript() const { return Script; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,7 +56,7 @@ protected:
 
 	AStageGrid* StageGrid = nullptr;
 
-	TArray<UAction*> Script;
+	TArray<AAction*> Script;
 
 	AStageCell* CurrentCell;
 };

@@ -26,6 +26,11 @@ void UActionScriptGeneratorComponent::Initialize(UActionPointResourceComponent* 
 
 void UActionScriptGeneratorComponent::Reset()
 {
+	if (OnReset.IsBound())
+	{
+		OnReset.Broadcast();
+	}
+
 	check(IsValid(ActionPoints));
 	ActionPoints->Reset();
 
@@ -35,7 +40,7 @@ void UActionScriptGeneratorComponent::Reset()
 	Script.Empty();
 }
 
-bool UActionScriptGeneratorComponent::TryAddAction(UAction* Action)
+bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 {
 	check(IsValid(Action));
 	check(IsValid(ActionPoints));
@@ -45,9 +50,9 @@ bool UActionScriptGeneratorComponent::TryAddAction(UAction* Action)
 		return false;
 	}
 
-	if (Action->IsA(UMoveAction::StaticClass()))
+	if (Action->IsA(AMoveAction::StaticClass()))
 	{
-		UMoveAction* MoveAction = Cast<UMoveAction>(Action);
+		AMoveAction* MoveAction = Cast<AMoveAction>(Action);
 
 		AStageCell* From = CurrentCell;
 
@@ -79,6 +84,8 @@ bool UActionScriptGeneratorComponent::TryAddAction(UAction* Action)
 		CurrentCell = To;
 	}
 
+	Action->Initialize();
+
 	Script.Add(Action);
 
 	ActionPoints->TryConsume(Action->Cost);
@@ -98,7 +105,7 @@ bool UActionScriptGeneratorComponent::TryRemoveEnd()
 		return false;
 	}
 
-	UAction* ActionToRemove = Script.Last(0);
+	AAction* ActionToRemove = Script.Last(0);
 
 	check(IsValid(ActionToRemove));
 	check(IsValid(ActionPoints));

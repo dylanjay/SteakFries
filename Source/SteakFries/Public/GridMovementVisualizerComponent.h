@@ -31,7 +31,7 @@ public:
 protected:
 
 	UFUNCTION()
-	void OnScriptActionAdded(UAction* Action);
+	void OnScriptActionAdded(AAction* Action);
 
 protected:
 

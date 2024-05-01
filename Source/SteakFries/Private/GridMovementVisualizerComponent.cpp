@@ -13,28 +13,27 @@ void UGridMovementVisualizerComponent::Initialize(UActionScriptGeneratorComponen
 
 	ActionScriptGenerator = InActionScriptGenerator;
 	ActionScriptGenerator->OnActionAdded.AddUniqueDynamic(this, &UGridMovementVisualizerComponent::OnScriptActionAdded);
+	ActionScriptGenerator->OnReset.AddUniqueDynamic(this, &UGridMovementVisualizerComponent::Reset);
 }
 
 void UGridMovementVisualizerComponent::Reset()
 {
 	for (int i = Arrows.Num() - 1; i >= 0; i--)
 	{
-		check(IsValid(Arrows[i]));
-
 		GetWorld()->DestroyActor(Arrows[i]);
 	}
 }
 
-void UGridMovementVisualizerComponent::OnScriptActionAdded(UAction* Action)
+void UGridMovementVisualizerComponent::OnScriptActionAdded(AAction* Action)
 {
 	check(IsValid(Action));
 
-	if (!Action->IsA(UMoveAction::StaticClass()))
+	if (!Action->IsA(AMoveAction::StaticClass()))
 	{
 		return;
 	}
 
-	UMoveAction* MoveAction = Cast<UMoveAction>(Action);
+	AMoveAction* MoveAction = Cast<AMoveAction>(Action);
 
 	FTransform ArrowTransform;
 	FVector ArrowLocation = (MoveAction->From->GetActorLocation() + MoveAction->To->GetActorLocation()) / 2;
