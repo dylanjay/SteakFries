@@ -10,6 +10,7 @@
 #include "GridMovementComponent.h"
 #include "ActionScriptGeneratorComponent.h"
 #include "ActionPointResourceComponent.h"
+#include "SwordAttackVisualizerComponent.h"
 
 ACharacterSpawner* ABattleGameMode::GetCharacterSpawner() const
 {
@@ -58,6 +59,9 @@ void ABattleGameMode::BeginPlay()
 
   UActionScriptGeneratorComponent* ActionScriptGeneratorComp = PlayerPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
   ActionScriptGeneratorComp->Initialize(ActionPointResourceComp, GridMovementComp, StageGrid);
+
+  USwordAttackVisualizerComponent* SwordAttackVisualizerComp = PlayerPawn->GetComponentByClass<USwordAttackVisualizerComponent>();
+  SwordAttackVisualizerComp->Initialize(ActionScriptGeneratorComp);
 
   GridMovementVisualizerComp->Initialize(ActionScriptGeneratorComp);
 

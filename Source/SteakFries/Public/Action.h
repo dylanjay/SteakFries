@@ -8,6 +8,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionComplete);
 
+class AStageCell;
+class AStageGrid;
+
 
 UCLASS(Blueprintable, BlueprintType)
 class STEAKFRIES_API AAction : public AActor
@@ -25,17 +28,21 @@ public:
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnActionComplete OnActionCompleteDelegate;
 
-	UPROPERTY(BlueprintReadOnly)
-	AGameModeBase* GameMode = nullptr;
+	UPROPERTY()
+	AStageGrid* StageGrid = nullptr;
+
+	UPROPERTY()
+	AStageCell* CellLocation = nullptr;
 
 public:
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Initialize();
+	UFUNCTION(BlueprintNativeEvent)
+	void Initialize(AStageGrid* InStageGrid, AStageCell* InCellLocation);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DoAction(APawn* Pawn);
 
 	UFUNCTION(BlueprintCallable)
 	float GetDelay() const { return Delay; }
+
 };

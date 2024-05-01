@@ -50,6 +50,8 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 		return false;
 	}
 
+	Action->Initialize(StageGrid, CurrentCell);
+
 	if (Action->IsA(AMoveAction::StaticClass()))
 	{
 		AMoveAction* MoveAction = Cast<AMoveAction>(Action);
@@ -60,16 +62,19 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 
 		if (MoveAction->X != 0)
 		{
+			if (!StageGrid->CanMoveX(CurrentCell, MoveAction->X))
+			{
+				return false;
+			}
 			CurrentLocation[0] += MoveAction->X;
 		}
 		else if (MoveAction->Y != 0)
 		{
+			if (!StageGrid->CanMoveY(CurrentCell, MoveAction->Y))
+			{
+				return false;
+			}
 			CurrentLocation[1] += MoveAction->Y;
-		}
-
-		if (!StageGrid->IsValidLocation(CurrentLocation))
-		{
-			return false;
 		}
 
 		AStageCell* To = StageGrid->GetCell(CurrentLocation);
@@ -79,12 +84,10 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 			return false;
 		}
 
-		MoveAction->FillEdgeData(From, To);
+		MoveAction->FillEdgeData(To);
 
 		CurrentCell = To;
 	}
-
-	Action->Initialize();
 
 	Script.Add(Action);
 

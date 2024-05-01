@@ -23,14 +23,10 @@ public:
 	int Y;
 
 	UPROPERTY()
-	AStageCell* From;
-
-	UPROPERTY()
-	AStageCell* To;
+	AStageCell* ToCell;
 
 public:
 
-	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	void FillEdgeData(AStageCell* InFrom, AStageCell* InTo);
+	void FillEdgeData(AStageCell* InToCell);
 	
 };

@@ -36,7 +36,7 @@ void UGridMovementVisualizerComponent::OnScriptActionAdded(AAction* Action)
 	AMoveAction* MoveAction = Cast<AMoveAction>(Action);
 
 	FTransform ArrowTransform;
-	FVector ArrowLocation = (MoveAction->From->GetActorLocation() + MoveAction->To->GetActorLocation()) / 2;
+	FVector ArrowLocation = (MoveAction->CellLocation->GetActorLocation() + MoveAction->ToCell->GetActorLocation()) / 2;
 
 	FVector ArrowNormal;
 	if (MoveAction->X > 0)
