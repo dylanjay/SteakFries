@@ -10,6 +10,7 @@
 class ATurnManager;
 class ACharacterSpawner;
 class AStageGrid;
+class AEnemyController;
 
 UCLASS()
 class STEAKFRIES_API ABattleGameMode : public AGameModeBase
@@ -37,15 +38,21 @@ protected:
 	TSubclassOf<APawn> EnemyPawnClass;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AEnemyController> EnemyControllerClass;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<int> StartingEnemyLocation = { 3, 5 };
 
-protected:
+public:
 
 	UFUNCTION(BlueprintCallable)
 	ACharacterSpawner* GetCharacterSpawner() const;
 
 	UFUNCTION(BlueprintCallable)
 	AStageGrid* GetStageGrid() const;
+
+	UFUNCTION(BlueprintCallable)
+	ATurnManager* GetTurnManager() const;
 
 	UFUNCTION(BlueprintCallable)
 	APawn* GetPlayerPawn() const;

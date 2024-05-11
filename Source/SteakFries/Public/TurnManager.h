@@ -6,34 +6,43 @@
 #include "GameFramework/Actor.h"
 #include "TurnManager.generated.h"
 
-// Forward Declarations
-class AController;
+class AEnemyController;
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class STEAKFRIES_API ATurnManager : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 
-	void Initialize(TArray<AController*> Controllers);
+	void Initialize(TArray<APawn*> APawn);
 
 	void Start();
 
-	bool NextTurn();
+	void NextTurn();
 
-	bool EndTurn();
-	
+public:
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	void EndTurn();
+
+	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
+	bool TrySetInput(APawn* Pawn, bool enable);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryGetPlayerController(AController* Controller, APlayerController*& OutPlayerController);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController);
+
 protected:
 
 	virtual void BeginPlay() override;
 
-	bool TrySetInput(AController* Controller, bool enable);
-
 protected:
 
-	TQueue<AController*> TurnQueue;
+	TQueue<APawn*> TurnQueue;
 
-	AController* CurrentTurn = nullptr;
+	APawn* CurrentTurn = nullptr;
 };

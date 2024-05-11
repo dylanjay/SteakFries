@@ -8,7 +8,15 @@ public class SteakFries : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayAbilities", "Paper2D" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"GameplayAbilities", 
+			"Paper2D", 
+			"AIModule" 
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

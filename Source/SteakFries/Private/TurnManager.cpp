@@ -3,11 +3,12 @@
 
 #include "TurnManager.h"
 #include "PaperFlipbookComponent.h"
+#include "EnemyController.h"
 
 
-void ATurnManager::Initialize(TArray<AController*> Controllers)
+void ATurnManager::Initialize(TArray<APawn*> Controllers)
 {
-	for (AController* Controller : Controllers)
+	for (APawn* Controller : Controllers)
 	{
 		check(IsValid(Controller));
 
@@ -22,43 +23,45 @@ void ATurnManager::Start()
 	NextTurn();
 }
 
-bool ATurnManager::NextTurn()
+void ATurnManager::NextTurn()
 {
 	// Dequeue
 	check(TurnQueue.Dequeue(CurrentTurn));
 	check(IsValid(CurrentTurn));
 
-	APawn* Pawn = CurrentTurn->GetPawn();
+	TrySetInput(CurrentTurn, true);
 
-	UPaperFlipbookComponent* PaperFlipbookComponent = Pawn->GetComponentByClass<UPaperFlipbookComponent>();
+	AEnemyController* EnemyController = nullptr;
+	if (TryGetEnemyController(CurrentTurn->GetController(), EnemyController))
+	{
+		
+	}
+
+
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurn->GetComponentByClass<UPaperFlipbookComponent>();
 
 	if (PaperFlipbookComponent)
 	{
 		PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
 	}
-
-	return true;
 }
 
-bool ATurnManager::EndTurn()
+void ATurnManager::EndTurn()
 {
-	if (CurrentTurn == nullptr)
-	{
-		return false;
-	}
+	check(IsValid(CurrentTurn));
 
 	TrySetInput(CurrentTurn, false);
 
 	TurnQueue.Enqueue(CurrentTurn);
 
-	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurn->GetPawn()->GetComponentByClass<UPaperFlipbookComponent>();
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurn->GetComponentByClass<UPaperFlipbookComponent>();
 
 	if (PaperFlipbookComponent)
 	{
 		PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
 	}
 
-	return NextTurn();
+	NextTurn();
 }
 
 void ATurnManager::BeginPlay()
@@ -66,21 +69,49 @@ void ATurnManager::BeginPlay()
 	Super::BeginPlay();
 }
 
-bool ATurnManager::TrySetInput(AController* Controller, bool enable)
+bool ATurnManager::TrySetInput(APawn* Pawn, bool enable)
 {
+	APlayerController* PlayerController = nullptr;
+	if (!TryGetPlayerController(Pawn->GetController(), PlayerController))
+	{
+		return false;
+	}
+
+	if (enable)
+	{
+		Pawn->EnableInput(PlayerController);
+	}
+	else
+	{
+		Pawn->DisableInput(PlayerController);
+	}
+	return true;
+}
+
+bool ATurnManager::TryGetPlayerController(AController* Controller, APlayerController*& OutPlayerController)
+{
+	OutPlayerController = nullptr;
+
+	check(IsValid(Controller));
 	if (!Controller->IsA(APlayerController::StaticClass()))
 	{
 		return false;
 	}
 
-	APlayerController* PlayerController = Cast<APlayerController>(Controller);
-	if (enable)
+	OutPlayerController = Cast<APlayerController>(Controller);
+	return true;
+}
+
+bool ATurnManager::TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController)
+{
+	OutEnemyController = nullptr;
+
+	check(IsValid(Controller));
+	if (!Controller->IsA(AEnemyController::StaticClass()))
 	{
-		PlayerController->EnableInput(PlayerController);
+		return false;
 	}
-	else
-	{
-		PlayerController->DisableInput(PlayerController);
-	}
+
+	OutEnemyController = Cast<AEnemyController>(Controller);
 	return true;
 }

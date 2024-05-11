@@ -11,6 +11,7 @@
 #include "ActionScriptGeneratorComponent.h"
 #include "ActionPointResourceComponent.h"
 #include "SwordAttackVisualizerComponent.h"
+#include "EnemyController.h"
 
 ACharacterSpawner* ABattleGameMode::GetCharacterSpawner() const
 {
@@ -22,6 +23,11 @@ AStageGrid* ABattleGameMode::GetStageGrid() const
   return StageGrid;
 }
 
+ATurnManager* ABattleGameMode::GetTurnManager() const
+{
+  return TurnManager;
+}
+
 APawn* ABattleGameMode::GetPlayerPawn() const
 {
   return PlayerPawn;
@@ -31,11 +37,9 @@ void ABattleGameMode::BeginPlay()
 {
   TurnManager = GetWorld()->SpawnActor<ATurnManager>(TurnManagerClass);
 
-  TArray<AController*> Controllers;
+  TArray<APawn*> Pawns;
 
   APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-
-  Controllers.Add(PlayerController);
 
   CharacterSpawner = GetWorld()->SpawnActor<ACharacterSpawner>(CharacterSpawnerClass);
   check(IsValid(CharacterSpawner));
@@ -46,6 +50,10 @@ void ABattleGameMode::BeginPlay()
   const FVector PlayerSpawnLocation = StageGrid->GetCell(StartingPlayerLocation)->GetActorLocation();
   PlayerPawn = CharacterSpawner->SpawnCharacterPawn(PlayerPawnClass, PlayerSpawnLocation);
   check(IsValid(PlayerPawn));
+
+  PlayerController->Possess(PlayerPawn);
+
+  Pawns.Add(PlayerPawn);
 
   StageGrid->InitializeOnGrid(PlayerPawn, StartingPlayerLocation);
 
@@ -64,8 +72,6 @@ void ABattleGameMode::BeginPlay()
   SwordAttackVisualizerComp->Initialize(ActionScriptGeneratorComp);
 
   GridMovementVisualizerComp->Initialize(ActionScriptGeneratorComp);
-
-  PlayerController->Possess(PlayerPawn);
   
   if (IsValid(EnemyPawnClass))
   {
@@ -73,12 +79,17 @@ void ABattleGameMode::BeginPlay()
     APawn* EnemyPawn = CharacterSpawner->SpawnCharacterPawn(EnemyPawnClass, EnemySpawnLocation);
     check(IsValid(EnemyPawn));
 
+    AEnemyController* EnemyController = GetWorld()->SpawnActor<AEnemyController>(EnemyControllerClass);
+    check(IsValid(EnemyController));
+
+    EnemyController->SetPawn(EnemyPawn);
+
+    Pawns.Add(EnemyPawn);
+
     StageGrid->InitializeOnGrid(EnemyPawn, StartingEnemyLocation);
-    
-    Controllers.Add(EnemyPawn->GetController());
   }
   
-  TurnManager->Initialize(Controllers);
+  TurnManager->Initialize(Pawns);
 
   TurnManager->Start();
 
