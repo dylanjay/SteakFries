@@ -83,6 +83,7 @@ void ABattleGameMode::BeginPlay()
     check(IsValid(EnemyController));
 
     EnemyController->SetPawn(EnemyPawn);
+    EnemyController->Initialize();
 
     Pawns.Add(EnemyPawn);
 

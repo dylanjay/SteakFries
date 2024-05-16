@@ -8,33 +8,39 @@
 
 class APawn;
 class ATurnManager;
-class UAIActionScriptGeneratorComponent;
+class UActionScriptGeneratorComponent;
 class UActionScriptComponent;
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract, Blueprintable)
 class STEAKFRIES_API AEnemyController : public AAIController
 {
 	GENERATED_BODY()
 
 public:
 
-	virtual void SetPawn(APawn* InPawn) override;
+	virtual void Initialize();
 
-	void TakeTurn();
+	virtual void SetAttackIntention();
+
+	virtual void Attack();
+
+	virtual void MoveInRange();
 
 protected:
 
 	UFUNCTION()
-	void OnScriptComplete();
+	void OnMoveInRangeComplete();
+
+	bool TryFindTarget(TArray<int> &OutTargetLocation);
 
 protected:
 
 	ATurnManager* TurnManager = nullptr;
 
-	UAIActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
+	UActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
 
 	UActionScriptComponent* ActionScript = nullptr;
 };
