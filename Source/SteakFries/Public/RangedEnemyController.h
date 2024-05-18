@@ -13,5 +13,11 @@ UCLASS()
 class STEAKFRIES_API ARangedEnemyController : public AEnemyController
 {
 	GENERATED_BODY()
+
+public:
+
+	virtual void MoveInRange() override;
+
+	virtual void Attack() override;
 	
 };

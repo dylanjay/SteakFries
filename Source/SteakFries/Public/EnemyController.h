@@ -19,6 +19,16 @@ class STEAKFRIES_API AEnemyController : public AAIController
 {
 	GENERATED_BODY()
 
+protected:
+
+	TArray<int> TargetLocation;
+
+	ATurnManager* TurnManager = nullptr;
+
+	UActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
+
+	UActionScriptComponent* ActionScript = nullptr;
+
 public:
 
 	virtual void Initialize();
@@ -35,12 +45,4 @@ protected:
 	void OnMoveInRangeComplete();
 
 	bool TryFindTarget(TArray<int> &OutTargetLocation);
-
-protected:
-
-	ATurnManager* TurnManager = nullptr;
-
-	UActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
-
-	UActionScriptComponent* ActionScript = nullptr;
 };
