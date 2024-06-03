@@ -5,25 +5,26 @@
 #include "StageCell.h"
 #include "GridMovementComponent.h"
 
-bool AStageGrid::CanMoveX(AStageCell* FromCell, int X)
+
+bool AStageGrid::CanMoveX(AStageCell* FromCell, int X) const
 {
 	if (X == 0)
 	{
 		return true;
 	}
 
-	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+	UE::Math::TIntPoint<int> CurrentPoint = FromCell->GetGridPoint();
 
-	if ((X > 0 && CurrentLocation[0] >= Width - X) ||
-		(X < 0 && CurrentLocation[0] < -X))
+	if ((X > 0 && CurrentPoint.X >= Width - X) ||
+		(X < 0 && CurrentPoint.X < -X))
 	{
 		return false;
 	}
 
 	int Direction = X > 0 ? 1 : -1;
-	TArray<int> NextCellLocation = CurrentLocation;
-	NextCellLocation[0] += Direction;
-	AStageCell* NextCell = GetCell(NextCellLocation);
+	UE::Math::TIntPoint<int> NextCellPoint = CurrentPoint;
+	NextCellPoint.X += Direction;
+	AStageCell* NextCell = GetCell(NextCellPoint);
 
 	while (X != 0)
 	{
@@ -39,33 +40,33 @@ bool AStageGrid::CanMoveX(AStageCell* FromCell, int X)
 			break;
 		}
 
-		CurrentLocation = NextCellLocation;
-		NextCellLocation[0] += Direction;
-		NextCell = GetCell(NextCellLocation);
+		CurrentPoint = NextCellPoint;
+		NextCellPoint.X += Direction;
+		NextCell = GetCell(NextCellPoint);
 	}
 
 	return !NextCell->IsFilled();
 }
 
-bool AStageGrid::CanMoveY(AStageCell* FromCell, int Y)
+bool AStageGrid::CanMoveY(AStageCell* FromCell, int Y) const
 {
 	if (Y == 0)
 	{
 		return true;
 	}
 
-	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+	UE::Math::TIntPoint<int> CurrentPoint = FromCell->GetGridPoint();
 
-	if ((Y > 0 && CurrentLocation[1] >= Height - Y) ||
-		(Y < 0 && CurrentLocation[1] < -Y ))
+	if ((Y > 0 && CurrentPoint.Y >= Height - Y) ||
+		(Y < 0 && CurrentPoint.Y < -Y ))
 	{
 		return false;
 	}
 
 	int Direction = Y > 0 ? 1 : -1;
-	TArray<int> NextCellLocation = CurrentLocation;
-	NextCellLocation[1] += Direction;
-	AStageCell* NextCell = GetCell(NextCellLocation);
+	UE::Math::TIntPoint<int> NextCellPoint = CurrentPoint;
+	NextCellPoint.Y += Direction;
+	AStageCell* NextCell = GetCell(NextCellPoint);
 
 	while (Y != 0)
 	{
@@ -81,9 +82,9 @@ bool AStageGrid::CanMoveY(AStageCell* FromCell, int Y)
 			break;
 		}
 
-		CurrentLocation = NextCellLocation;
-		NextCellLocation[1] += Direction;
-		NextCell = GetCell(NextCellLocation);
+		CurrentPoint = NextCellPoint;
+		NextCellPoint.Y += Direction;
+		NextCell = GetCell(NextCellPoint);
 	}
 
 	return !NextCell->IsFilled();
@@ -96,34 +97,34 @@ AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int X)
 		return FromCell;
 	}
 
-	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+	UE::Math::TIntPoint<int> CurrentPoint = FromCell->GetGridPoint();
 
-	if ((X > 0 && CurrentLocation[0] >= Width - X) ||
-		(X < 0 && CurrentLocation[0] < -X))
+	if ((X > 0 && CurrentPoint.X >= Width - X) ||
+		(X < 0 && CurrentPoint.X < -X))
 	{
 		return FromCell;
 	}
 
 	int Direction = X > 0 ? 1 : -1;
-	TArray<int> NextLocation = CurrentLocation;
-	NextLocation[0] += Direction;
-	AStageCell* NextCell = GetCell(NextLocation);
+	UE::Math::TIntPoint<int> NextPoint = CurrentPoint;
+	NextPoint.X += Direction;
+	AStageCell* NextCell = GetCell(NextPoint);
 
 	if (NextCell->IsFilled())
 	{
 		return FromCell;
 	}
 
-	while (X != 0 && NextLocation[0] < Width && NextLocation[0] >= 0 && !NextCell->IsFilled())
+	while (X != 0 && NextPoint.X < Width && NextPoint.X >= 0 && !NextCell->IsFilled())
 	{
 		X -= Direction;
-		CurrentLocation = NextLocation;
-		NextLocation[0] += Direction;
-		NextCell = GetCell(NextLocation);
+		CurrentPoint = NextPoint;
+		NextPoint.X += Direction;
+		NextCell = GetCell(NextPoint);
 	}
 
 	AActor* Actor = FromCell->Empty();
-	AStageCell* CurCell = GetCell(CurrentLocation);
+	AStageCell* CurCell = GetCell(CurrentPoint);
 	CurCell->Fill(Actor);
 
 	CharacterCells[Actor] = CurCell;
@@ -138,34 +139,34 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 		return FromCell;
 	}
 
-	TArray<int> CurrentLocation = FromCell->GetGridLocation();
+	UE::Math::TIntPoint<int> CurrentPoint = FromCell->GetGridPoint();
 
-	if ((Y > 0 && CurrentLocation[1] >= Height - Y) ||
-		(Y < 0 && CurrentLocation[1] < -Y))
+	if ((Y > 0 && CurrentPoint.Y >= Height - Y) ||
+		(Y < 0 && CurrentPoint.Y < -Y))
 	{
 		return FromCell;
 	}
 
 	int Direction = Y > 0 ? 1 : -1;
-	TArray<int> NextLocation = CurrentLocation;
-	NextLocation[1] += Direction;
-	AStageCell* NextCell = GetCell(NextLocation);
+	UE::Math::TIntPoint<int> NextPoint = CurrentPoint;
+	NextPoint.Y += Direction;
+	AStageCell* NextCell = GetCell(NextPoint);
 
 	if (NextCell->IsFilled())
 	{
 		return FromCell;
 	}
 
-	while (Y != 0 && NextLocation[1] < Height && NextLocation[1] >= 0 && !NextCell->IsFilled())
+	while (Y != 0 && NextPoint.Y < Height && NextPoint.Y >= 0 && !NextCell->IsFilled())
 	{
 		Y -= Direction;
-		CurrentLocation = NextLocation;
-		NextLocation[1] += Direction;
-		NextCell = GetCell(NextLocation);
+		CurrentPoint = NextPoint;
+		NextPoint.Y += Direction;
+		NextCell = GetCell(NextPoint);
 	}
 
 	AActor* Actor = FromCell->Empty();
-	AStageCell* CurCell = GetCell(CurrentLocation);
+	AStageCell* CurCell = GetCell(CurrentPoint);
 	CurCell->Fill(Actor);
 
 	CharacterCells[Actor] = CurCell;
@@ -173,7 +174,7 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int Y)
 	return CurCell;
 }
 
-AStageCell* AStageGrid::FindCharacter(AActor* Actor)
+AStageCell* AStageGrid::FindCharacter(AActor* Actor) const
 {
 	if (!CharacterCells.Contains(Actor))
 	{ 
@@ -183,14 +184,20 @@ AStageCell* AStageGrid::FindCharacter(AActor* Actor)
 	return CharacterCells[Actor];
 }
 
-bool AStageGrid::IsValidLocation(const TArray<int>& Location) const
+bool AStageGrid::IsValidPoint(const TArray<int>& PointArray) const
 {
-	if (Location[0] < 0 || Location[0] >= Width)
+	UE::Math::TIntPoint<int> Point(PointArray[0], PointArray[1]);
+	return IsValidPoint(Point);
+} 
+
+bool AStageGrid::IsValidPoint(const UE::Math::TIntPoint<int>& Point) const
+{
+	if (Point.X < 0 || Point.X >= Width)
 	{
 		return false;
 	}
 
-	if (Location[1] < 0 || Location[1] >= Height)
+	if (Point.Y < 0 || Point.Y >= Height)
 	{
 		return false;
 	}
@@ -198,18 +205,38 @@ bool AStageGrid::IsValidLocation(const TArray<int>& Location) const
 	return true;
 }
 
-AStageCell* AStageGrid::GetCell(const TArray<int>& Location)
+AStageCell* AStageGrid::GetNeighbor(AStageCell* Cell, EGridDirection Direction) const
 {
-	if (Location[0] >= 0 && Location[0] < Width && Location[1] >= 0 && Location[1] < Height)
+	check(IsValid(Cell));
+	
+	return Cell;
+
+	/*UE::Math::TIntPoint<int> NeighborPoint = Cell->GetGridPoint();
+	switch (Direction)
 	{
-		AStageCell* Cell = Grid[Location[0]][Location[1]];
+	case EGridDirection::UP:
+		break;
+	}*/
+}
+
+AStageCell* AStageGrid::GetCell(const TArray<int>& PointArray) const
+{
+	UE::Math::TIntPoint<int> Point(PointArray[0], PointArray[1]);
+	return GetCell(Point);
+}
+
+AStageCell* AStageGrid::GetCell(const UE::Math::TIntPoint<int>& Point) const
+{
+	if (Point.X >= 0 && Point.X < Width && Point.Y >= 0 && Point.Y < Height)
+	{
+		AStageCell* Cell = Grid[Point.X][Point.Y];
 		check(IsValid(Cell));
 		return Cell;
 	}
 	return nullptr;
 }
 
-bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocation)
+bool AStageGrid::InitializeOnGrid(APawn* Pawn, const UE::Math::TIntPoint<int>& StartingPoint)
 {
 	if (!IsValid(Pawn))
 	{
@@ -219,7 +246,7 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TArray<int>& StartingLocati
 	UGridMovementComponent* GridMovementComp = Pawn->GetComponentByClass<UGridMovementComponent>();
 	check(IsValid(GridMovementComp));
 
-	AStageCell* StageCell = GetCell(StartingLocation);
+	AStageCell* StageCell = GetCell(StartingPoint);
 	check(IsValid(StageCell));
 
 	if (StageCell->IsFilled())
@@ -248,13 +275,13 @@ void AStageGrid::CreateGrid()
 
 	FirstCell->SetActorRelativeLocation(FVector(-CellLength / 2.0f, CellWidth / 2.0f, 0.0f));
 
-	FVector CellLocation = FirstCell->GetActorLocation();
+	FVector CellPoint = FirstCell->GetActorLocation();
 
-	float OriginCellX = CellLocation.X;
+	float OriginCellX = CellPoint.X;
 
 	for (int colIndex = 0; colIndex < Width; colIndex++)
 	{
-		CellLocation.X = OriginCellX;
+		CellPoint.X = OriginCellX;
 
 		TArray<AStageCell*> Col;
 
@@ -267,17 +294,17 @@ void AStageGrid::CreateGrid()
 			}
 			else
 			{
-				Cell = GetWorld()->SpawnActor<AStageCell>(StageCellClass, CellLocation, Rotation);
+				Cell = GetWorld()->SpawnActor<AStageCell>(StageCellClass, CellPoint, Rotation);
 			}
 
 			Cell->Initialize(colIndex, rowIndex);
 
-			CellLocation.X += CellLength;
+			CellPoint.X += CellLength;
 
 			Col.Add(Cell);
 		}
 
-		CellLocation.Y += CellWidth;
+		CellPoint.Y += CellWidth;
 
 		Grid.Add(Col);
 	}

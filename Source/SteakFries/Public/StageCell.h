@@ -29,7 +29,7 @@ protected:
 
 	AActor* FillingActor;
 
-	TArray<int> GridLocation;
+	UE::Math::TIntPoint<int>* GridPoint;
 
 public:
 
@@ -52,10 +52,21 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	TArray<int> GetGridLocation() const
+	TArray<int> BP_GetGridPoint() const
 	{
-		return GridLocation;
+		TArray<int> Array;
+		Array.Init(GridPoint->X, GridPoint->Y);
+		return Array;
 	}
+
+public:
+
+	UE::Math::TIntPoint<int> GetGridPoint() const
+	{
+		return *GridPoint;
+	}
+
+	virtual ~AStageCell();
 
 protected:
 	virtual void BeginPlay() override;

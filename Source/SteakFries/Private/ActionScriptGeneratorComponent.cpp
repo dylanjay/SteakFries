@@ -58,7 +58,7 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 
 		AStageCell* From = CurrentCell;
 
-		TArray<int> CurrentLocation = From->GetGridLocation();
+		UE::Math::TIntPoint<int> CurrentLocation = From->GetGridPoint();
 
 		if (MoveAction->X != 0)
 		{
@@ -66,7 +66,7 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 			{
 				return false;
 			}
-			CurrentLocation[0] += MoveAction->X;
+			CurrentLocation.X += MoveAction->X;
 		}
 		else if (MoveAction->Y != 0)
 		{
@@ -74,7 +74,7 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 			{
 				return false;
 			}
-			CurrentLocation[1] += MoveAction->Y;
+			CurrentLocation.Y += MoveAction->Y;
 		}
 
 		AStageCell* To = StageGrid->GetCell(CurrentLocation);

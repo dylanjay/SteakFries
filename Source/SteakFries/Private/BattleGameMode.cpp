@@ -33,6 +33,12 @@ APawn* ABattleGameMode::GetPlayerPawn() const
   return PlayerPawn;
 }
 
+ABattleGameMode::~ABattleGameMode()
+{
+  delete PlayerStartingPoint;
+  delete EnemyStartingPoint;
+}
+
 void ABattleGameMode::BeginPlay()
 {
   TurnManager = GetWorld()->SpawnActor<ATurnManager>(TurnManagerClass);
@@ -47,15 +53,16 @@ void ABattleGameMode::BeginPlay()
   StageGrid = GetWorld()->SpawnActor<AStageGrid>(StageGridClass);
   check(IsValid(StageGrid));
   
-  const FVector PlayerSpawnLocation = StageGrid->GetCell(StartingPlayerLocation)->GetActorLocation();
-  PlayerPawn = CharacterSpawner->SpawnCharacterPawn(PlayerPawnClass, PlayerSpawnLocation);
+  const FVector PlayerSpawnPoint = StageGrid->GetCell(PlayerStartingPointArray)->GetActorLocation();
+  PlayerPawn = CharacterSpawner->SpawnCharacterPawn(PlayerPawnClass, PlayerSpawnPoint);
   check(IsValid(PlayerPawn));
 
   PlayerController->Possess(PlayerPawn);
 
   Pawns.Add(PlayerPawn);
 
-  StageGrid->InitializeOnGrid(PlayerPawn, StartingPlayerLocation);
+  PlayerStartingPoint = new UE::Math::TIntPoint<int>(PlayerStartingPointArray[0], PlayerStartingPointArray[1]);
+  StageGrid->InitializeOnGrid(PlayerPawn, *PlayerStartingPoint);
 
   UGridMovementVisualizerComponent* GridMovementVisualizerComp = PlayerPawn->GetComponentByClass<UGridMovementVisualizerComponent>();
   check(IsValid(GridMovementVisualizerComp));
@@ -75,8 +82,8 @@ void ABattleGameMode::BeginPlay()
   
   if (IsValid(EnemyPawnClass))
   {
-    const FVector EnemySpawnLocation = StageGrid->GetCell(StartingEnemyLocation)->GetActorLocation();
-    APawn* EnemyPawn = CharacterSpawner->SpawnCharacterPawn(EnemyPawnClass, EnemySpawnLocation);
+    const FVector EnemySpawnPoint = StageGrid->GetCell(EnemyStartingPointArray)->GetActorLocation();
+    APawn* EnemyPawn = CharacterSpawner->SpawnCharacterPawn(EnemyPawnClass, EnemySpawnPoint);
     check(IsValid(EnemyPawn));
 
     AEnemyController* EnemyController = GetWorld()->SpawnActor<AEnemyController>(EnemyControllerClass);
@@ -87,7 +94,8 @@ void ABattleGameMode::BeginPlay()
 
     Pawns.Add(EnemyPawn);
 
-    StageGrid->InitializeOnGrid(EnemyPawn, StartingEnemyLocation);
+    EnemyStartingPoint = new UE::Math::TIntPoint<int>(EnemyStartingPointArray[0], EnemyStartingPointArray[1]);
+    StageGrid->InitializeOnGrid(EnemyPawn, *EnemyStartingPoint);
   }
   
   TurnManager->Initialize(Pawns);

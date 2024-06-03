@@ -31,8 +31,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> PlayerPawnClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int> StartingPlayerLocation = { 3, 0 };
+	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Player Starting Point"))
+	TArray<int> PlayerStartingPointArray = { 3, 0 };
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> EnemyPawnClass;
@@ -40,8 +40,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AEnemyController> EnemyControllerClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int> StartingEnemyLocation = { 3, 5 };
+	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Enemy Starting Point"))
+	TArray<int> EnemyStartingPointArray = { 3, 5 };
+
+protected:
+
+	UPROPERTY()
+	ATurnManager* TurnManager;
+
+	UPROPERTY()
+	ACharacterSpawner* CharacterSpawner;
+
+	UPROPERTY()
+	AStageGrid* StageGrid;
+
+	UPROPERTY()
+	APawn* PlayerPawn;
+
+	UE::Math::TIntPoint<int>* PlayerStartingPoint;
+
+	UE::Math::TIntPoint<int>* EnemyStartingPoint;
 
 public:
 
@@ -57,19 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	APawn* GetPlayerPawn() const;
 
-protected:
+public:
 
-	UPROPERTY()
-	ATurnManager* TurnManager;
-
-	UPROPERTY()
-	ACharacterSpawner* CharacterSpawner;
-
-	UPROPERTY()
-	AStageGrid* StageGrid;
-
-	UPROPERTY()
-	APawn* PlayerPawn;
+	virtual ~ABattleGameMode();
 
 protected:
 

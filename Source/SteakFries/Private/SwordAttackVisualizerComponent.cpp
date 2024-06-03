@@ -34,10 +34,10 @@ void USwordAttackVisualizerComponent::OnScriptActionAdded(AAction* Action)
 	}
 
 	FTransform VisualizerTransform;
-	TArray<int> GridLocation = Action->CellLocation->GetGridLocation();
-	GridLocation[1]++;
+	UE::Math::TIntPoint<int> GridPoint = Action->CellLocation->GetGridPoint();
+	GridPoint.Y++;
 
-	AStageCell* TargetCell = Action->StageGrid->GetCell(GridLocation);
+	AStageCell* TargetCell = Action->StageGrid->GetCell(GridPoint);
 
 	FVector Location = TargetCell->GetActorLocation();
 	VisualizerTransform.SetComponents(FQuat::Identity, Location, FVector::OneVector);

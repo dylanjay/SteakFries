@@ -5,7 +5,7 @@
 
 void AStageCell::Initialize(int Col, int Row)
 {
-	GridLocation = { Col, Row };
+	GridPoint = new UE::Math::TIntPoint<int>(Col, Row);
 }
 
 void AStageCell::Fill(AActor* Actor)
@@ -21,6 +21,11 @@ AActor* AStageCell::Empty()
 	AActor* Actor = FillingActor;
 	FillingActor = nullptr;
 	return Actor;
+}
+
+AStageCell::~AStageCell()
+{
+	delete GridPoint;
 }
 
 void AStageCell::BeginPlay()
