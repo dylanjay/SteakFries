@@ -25,20 +25,28 @@ void ATurnManager::Start()
 
 void ATurnManager::NextTurn()
 {
-	// Dequeue
-	check(TurnQueue.Dequeue(CurrentTurn));
-	check(IsValid(CurrentTurn));
+	TurnQueue.Dequeue(CurrentTurnPawn);
 
-	TrySetInput(CurrentTurn, true);
+	check(IsValid(CurrentTurnPawn));
+
+	TrySetInput(CurrentTurnPawn, true);
 
 	AEnemyController* EnemyController = nullptr;
-	if (TryGetEnemyController(CurrentTurn->GetController(), EnemyController))
+
+	bool IsPlayerTurn = !TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController);
+	
+	if (IsPlayerTurn)
 	{
+		TrySetInput(CurrentTurnPawn, true);
+	}
+	else
+	{
+		check(IsValid(EnemyController));
 		
+		EnemyController->MoveInRange();
 	}
 
-
-	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurn->GetComponentByClass<UPaperFlipbookComponent>();
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
 
 	if (PaperFlipbookComponent)
 	{
@@ -48,13 +56,13 @@ void ATurnManager::NextTurn()
 
 void ATurnManager::EndTurn()
 {
-	check(IsValid(CurrentTurn));
+	check(IsValid(CurrentTurnPawn));
 
-	TrySetInput(CurrentTurn, false);
+	TrySetInput(CurrentTurnPawn, false);
 
-	TurnQueue.Enqueue(CurrentTurn);
+	TurnQueue.Enqueue(CurrentTurnPawn);
 
-	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurn->GetComponentByClass<UPaperFlipbookComponent>();
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
 
 	if (PaperFlipbookComponent)
 	{

@@ -1,6 +1,7 @@
 // All rights reserved
 
 #include "ActionScriptGeneratorComponent.h"
+#include "ActionScriptPlayerComponent.h"
 #include "ActionPointResourceComponent.h"
 #include "GridMovementComponent.h"
 #include "StageCell.h"
@@ -13,9 +14,10 @@ void UActionScriptGeneratorComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UActionScriptGeneratorComponent::Initialize(UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid)
+void UActionScriptGeneratorComponent::Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid)
 {
-	check(IsValid(InActionPoints));
+	ScriptPlayer = InScriptPlayer;
+	ScriptPlayer->OnScriptComplete.AddUniqueDynamic(this, &UActionScriptGeneratorComponent::OnPlayScriptComplete);
 
 	ActionPoints = InActionPoints;
 	GridMovement = InGridMovement;
@@ -45,53 +47,29 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 	check(IsValid(Action));
 	check(IsValid(ActionPoints));
 
-	if (!ActionPoints->CanAfford(Action->Cost))
+	if (!ActionPoints->CanAfford(Action->GetCost()))
 	{
 		return false;
 	}
 
 	Action->Initialize(StageGrid, CurrentCell);
 
-	if (Action->IsA(AMoveAction::StaticClass()))
+	if (!Action->CanPlay(CurrentCell))
 	{
-		AMoveAction* MoveAction = Cast<AMoveAction>(Action);
-
-		AStageCell* From = CurrentCell;
-
-		UE::Math::TIntPoint<int> CurrentLocation = From->GetGridPoint();
-
-		if (MoveAction->X != 0)
-		{
-			if (!StageGrid->CanMoveX(CurrentCell, MoveAction->X))
-			{
-				return false;
-			}
-			CurrentLocation.X += MoveAction->X;
-		}
-		else if (MoveAction->Y != 0)
-		{
-			if (!StageGrid->CanMoveY(CurrentCell, MoveAction->Y))
-			{
-				return false;
-			}
-			CurrentLocation.Y += MoveAction->Y;
-		}
-
-		AStageCell* To = StageGrid->GetCell(CurrentLocation);
-
-		if (From == To)
-		{
-			return false;
-		}
-
-		MoveAction->FillEdgeData(To);
-
-		CurrentCell = To;
+		return false;
 	}
 
 	Script.Add(Action);
 
-	ActionPoints->TryConsume(Action->Cost);
+	// TODO: shouldn't be consuming here
+	ActionPoints->TryConsume(Action->GetCost());
+
+	if (Action->IsA(AMoveAction::StaticClass()))
+	{
+		AMoveAction* MoveAction = Cast<AMoveAction>(Action);
+		CurrentCell = MoveAction->GetDestination();
+		check(IsValid(CurrentCell));
+	}
 	
 	if (OnActionAdded.IsBound())
 	{
@@ -113,8 +91,14 @@ bool UActionScriptGeneratorComponent::TryRemoveEnd()
 	check(IsValid(ActionToRemove));
 	check(IsValid(ActionPoints));
 
-	ActionPoints->Refund(ActionToRemove->Cost);
+	ActionPoints->Refund(ActionToRemove->GetCost());
 
 	return true;
 }
 
+void UActionScriptGeneratorComponent::OnPlayScriptComplete()
+{
+	Script.Empty();
+
+	CurrentCell = GridMovement->GetCurrentCell();
+}

@@ -3,7 +3,7 @@
 
 #include "GridMovementVisualizerComponent.h"
 #include "ActionScriptGeneratorComponent.h"
-#include "MoveAction.h"
+#include "SingleMoveAction.h"
 #include "StageCell.h"
 
 
@@ -22,32 +22,40 @@ void UGridMovementVisualizerComponent::Reset()
 	{
 		GetWorld()->DestroyActor(Arrows[i]);
 	}
+
+	Arrows.Empty();
 }
 
 void UGridMovementVisualizerComponent::OnScriptActionAdded(AAction* Action)
 {
 	check(IsValid(Action));
 
-	if (!Action->IsA(AMoveAction::StaticClass()))
+	if (!Action->IsA(ASingleMoveAction::StaticClass()))
 	{
 		return;
 	}
 
-	AMoveAction* MoveAction = Cast<AMoveAction>(Action);
+	ASingleMoveAction* SingleMoveAction = Cast<ASingleMoveAction>(Action);
+
+	AStageCell* ActionStart = SingleMoveAction->GetCellLocation();
+	check(IsValid(ActionStart));
+
+	AStageCell* Destination = SingleMoveAction->GetDestination();
+	check(IsValid(Destination));
 
 	FTransform ArrowTransform;
-	FVector ArrowLocation = (MoveAction->CellLocation->GetActorLocation() + MoveAction->ToCell->GetActorLocation()) / 2;
+	FVector ArrowLocation = (ActionStart->GetActorLocation() + Destination->GetActorLocation()) / 2;
 
 	FVector ArrowNormal;
-	if (MoveAction->X > 0)
+	if (SingleMoveAction->X > 0)
 	{
 		ArrowNormal = FVector::RightVector;
 	}
-	else if (MoveAction->X < 0)
+	else if (SingleMoveAction->X < 0)
 	{
 		ArrowNormal = FVector::LeftVector;
 	}
-	else if (MoveAction->Y < 0)
+	else if (SingleMoveAction->Y < 0)
 	{
 		ArrowNormal = FVector::BackwardVector;
 	}

@@ -44,5 +44,5 @@ protected:
 
 	TQueue<APawn*> TurnQueue;
 
-	APawn* CurrentTurn = nullptr;
+	APawn* CurrentTurnPawn = nullptr;
 };

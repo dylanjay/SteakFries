@@ -2,8 +2,10 @@
 
 
 #include "StageGrid.h"
-#include "StageCell.h"
 #include "GridMovementComponent.h"
+#include <stack>
+#include <set>
+#include "Logging/StructuredLog.h"
 
 
 bool AStageGrid::CanMoveX(AStageCell* FromCell, int X) const
@@ -205,24 +207,28 @@ bool AStageGrid::IsValidPoint(const UE::Math::TIntPoint<int>& Point) const
 	return true;
 }
 
-AStageCell* AStageGrid::GetNeighbor(AStageCell* Cell, EGridDirection Direction) const
+bool AStageGrid::IsFilled(const UE::Math::TIntPoint<int>& Point) const
 {
-	check(IsValid(Cell));
-	
-	return Cell;
+	check(IsValidPoint(Point));
 
-	/*UE::Math::TIntPoint<int> NeighborPoint = Cell->GetGridPoint();
-	switch (Direction)
-	{
-	case EGridDirection::UP:
-		break;
-	}*/
+	return GetCell(Point)->IsFilled();
 }
 
 AStageCell* AStageGrid::GetCell(const TArray<int>& PointArray) const
 {
 	UE::Math::TIntPoint<int> Point(PointArray[0], PointArray[1]);
 	return GetCell(Point);
+}
+
+AStageGrid::AStageGrid()
+{
+	CardinalDirections =
+	{
+		new UE::Math::TIntPoint<int>(0, 1),
+		new UE::Math::TIntPoint<int>(1, 0),
+		new UE::Math::TIntPoint<int>(0, -1),
+		new UE::Math::TIntPoint<int>(-1, 0)
+	};
 }
 
 AStageCell* AStageGrid::GetCell(const UE::Math::TIntPoint<int>& Point) const
@@ -261,6 +267,126 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, const UE::Math::TIntPoint<int>& S
 	GridMovementComp->Initialize(this, StageCell);
 
 	return true;
+}
+
+bool AStageGrid::TryFindPathToCell(AStageCell* Start, AStageCell* Destination, TArray<AStageCell*>& OutPath)
+{
+	check(IsValid(Start));
+	check(IsValid(Destination));
+
+	if (Destination->IsFilled())
+	{
+		return false;
+	}
+
+	if (Start == Destination)
+	{
+		return true;
+	}
+
+	TArray<TArray<CellSearchData>> DataMatrix;
+	for (int ColIndex = 0; ColIndex < GetWidth(); ColIndex++)
+	{
+		TArray<CellSearchData> Col;
+
+		TPoint Point;
+
+		for (int RowIndex = 0; RowIndex < GetHeight(); RowIndex++)
+		{
+			Point.X = ColIndex;
+			Point.Y = RowIndex;
+
+			AStageCell* Cell = GetCell(Point);
+			CellSearchData CellData(Cell);
+			Col.Add(CellData);
+		}
+
+		DataMatrix.Add(Col);
+	}
+
+	TPoint StartPoint = Start->GetGridPoint();
+	DataMatrix[StartPoint.X][StartPoint.Y].Parent = Start;
+	DataMatrix[StartPoint.X][StartPoint.Y].Cost = 0.0f;
+	DataMatrix[StartPoint.X][StartPoint.Y].MoveCost = 0.0f;
+	DataMatrix[StartPoint.X][StartPoint.Y].HeuristicCost = 0.0f;
+
+	std::set<CellSearchData, decltype(&CellSearchData::Compare)> OpenList(&CellSearchData::Compare);
+
+	OpenList.insert(DataMatrix[StartPoint.X][StartPoint.Y]);
+
+	while (OpenList.size() > 0)
+	{
+		const CellSearchData &Cur = *OpenList.begin();
+		OpenList.erase(OpenList.begin());
+
+		TPoint CurPoint = Cur.Cell->GetGridPoint();
+
+		DataMatrix[CurPoint.X][CurPoint.Y].Visited = true;
+
+		for (const TPoint* Direction : CardinalDirections)
+		{
+			TPoint NeighborPoint = CurPoint + *Direction;
+
+			if (IsValidPoint(NeighborPoint))
+			{
+				const CellSearchData &Neighbor = DataMatrix[NeighborPoint.X][NeighborPoint.Y];
+
+				// found destination
+				if (Neighbor.Cell == Destination)
+				{
+					DataMatrix[NeighborPoint.X][NeighborPoint.Y].Parent = Cur.Cell;
+
+					OutPath = TracePath(DataMatrix, Start, Destination);
+
+					return true;
+				}
+
+				if (!Neighbor.Visited && !IsFilled(Neighbor.Cell->GetGridPoint()))
+				{
+					float MoveCostNew = DataMatrix[CurPoint.X][CurPoint.Y].MoveCost + 1.0f;
+					float HeuristicCostNew = DataMatrix[NeighborPoint.X][NeighborPoint.Y].CalculateHeuristicCost(Destination);
+					float CostNew = MoveCostNew + HeuristicCostNew;
+
+					if (DataMatrix[NeighborPoint.X][NeighborPoint.Y].Cost == FLT_MAX
+						|| DataMatrix[NeighborPoint.X][NeighborPoint.Y].Cost > CostNew)
+					{
+						DataMatrix[NeighborPoint.X][NeighborPoint.Y].Parent = Cur.Cell;
+						DataMatrix[NeighborPoint.X][NeighborPoint.Y].MoveCost = MoveCostNew;
+						DataMatrix[NeighborPoint.X][NeighborPoint.Y].HeuristicCost = HeuristicCostNew;
+						DataMatrix[NeighborPoint.X][NeighborPoint.Y].Cost = CostNew;
+						OpenList.insert(DataMatrix[NeighborPoint.X][NeighborPoint.Y]);
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+TArray<AStageCell*> AStageGrid::TracePath(const TArray<TArray<CellSearchData>>& DataMatrix, AStageCell* Start, AStageCell* Destination)
+{
+	TArray<AStageCell*> Path;
+
+	AStageCell* Cur = Destination;
+	TPoint CurPoint = Destination->GetGridPoint();
+
+	std::stack<AStageCell*> Stack;
+
+	while (DataMatrix[Cur->GetGridPoint().X][Cur->GetGridPoint().Y].Cell != Start)
+	{
+		Stack.push(Cur);
+		Cur = DataMatrix[Cur->GetGridPoint().X][Cur->GetGridPoint().Y].Parent;
+	}
+
+	Path.Add(Cur);
+	while (Stack.size() > 0)
+	{
+		Path.Add(Stack.top());
+		Stack.pop();
+	}
+
+	return Path;
 }
 
 void AStageGrid::CreateGrid()

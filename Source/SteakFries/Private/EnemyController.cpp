@@ -4,15 +4,19 @@
 #include "EnemyController.h"
 #include "BattleGameMode.h"
 #include "TurnManager.h"
-#include "ActionScriptComponent.h"
+#include "ActionScriptPlayerComponent.h"
 #include "ActionScriptGeneratorComponent.h"
 #include "GridMovementComponent.h"
 #include "StageCell.h"
 
 
-void AEnemyController::Initialize()
+void AEnemyController::Initialize(AStageGrid* InStageGrid)
 {
-  APawn* EnemyPawn = GetPawn();
+  check(IsValid(InStageGrid));
+
+  StageGrid = InStageGrid;
+
+  EnemyPawn = GetPawn();
 
   check(IsValid(EnemyPawn));
 
@@ -22,10 +26,13 @@ void AEnemyController::Initialize()
   ActionScriptGenerator = EnemyPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
   check(IsValid(ActionScriptGenerator));
 
-  ActionScript = EnemyPawn->GetComponentByClass<UActionScriptComponent>();
-  check(IsValid(ActionScript));
+  ActionScriptPlayer = EnemyPawn->GetComponentByClass<UActionScriptPlayerComponent>();
+  check(IsValid(ActionScriptPlayer));
 
-  ActionScript->OnScriptComplete.AddUniqueDynamic(this, &AEnemyController::OnMoveInRangeComplete);
+  ActionScriptPlayer->OnScriptComplete.AddUniqueDynamic(this, &AEnemyController::OnMoveInRangeComplete);
+
+  GridMovementComp = EnemyPawn->GetComponentByClass<UGridMovementComponent>();
+  check(IsValid(GridMovementComp));
 }
 
 void AEnemyController::SetAttackIntention()
@@ -46,7 +53,7 @@ void AEnemyController::OnMoveInRangeComplete()
   TurnManager->EndTurn();
 }
 
-bool AEnemyController::TryFindTarget(TArray<int>& OutTargetLocation)
+bool AEnemyController::TryFindTarget(UE::Math::TIntPoint<int>& OutTargetLocation)
 {
   ABattleGameMode* BattleGameMode = Cast<ABattleGameMode>(GetPawn()->GetWorld()->GetAuthGameMode());
 
@@ -54,7 +61,7 @@ bool AEnemyController::TryFindTarget(TArray<int>& OutTargetLocation)
 
   UGridMovementComponent* PlayerMovementComp = PlayerPawn->GetComponentByClass<UGridMovementComponent>();
 
-  OutTargetLocation = PlayerMovementComp->GetCurrentCell()->GetGridLocation();
+  OutTargetLocation = PlayerMovementComp->GetCurrentCell()->GetGridPoint();
 
   return true;
 }

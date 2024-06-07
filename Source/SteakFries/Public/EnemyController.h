@@ -9,11 +9,10 @@
 class APawn;
 class ATurnManager;
 class UActionScriptGeneratorComponent;
-class UActionScriptComponent;
+class UActionScriptPlayerComponent;
+class AStageGrid;
+class UGridMovementComponent;
 
-/**
- * 
- */
 UCLASS(Abstract, Blueprintable)
 class STEAKFRIES_API AEnemyController : public AAIController
 {
@@ -21,17 +20,23 @@ class STEAKFRIES_API AEnemyController : public AAIController
 
 protected:
 
-	TArray<int> TargetLocation;
+	APawn* EnemyPawn = nullptr;
+
+	UE::Math::TIntPoint<int> TargetLocation;
 
 	ATurnManager* TurnManager = nullptr;
 
 	UActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
 
-	UActionScriptComponent* ActionScript = nullptr;
+	UActionScriptPlayerComponent* ActionScriptPlayer = nullptr;
+
+	AStageGrid* StageGrid = nullptr;
+
+	UGridMovementComponent* GridMovementComp = nullptr;
 
 public:
 
-	virtual void Initialize();
+	virtual void Initialize(AStageGrid* InStageGrid);
 
 	virtual void SetAttackIntention();
 
@@ -44,5 +49,5 @@ protected:
 	UFUNCTION()
 	void OnMoveInRangeComplete();
 
-	bool TryFindTarget(TArray<int> &OutTargetLocation);
+	bool TryFindTarget(UE::Math::TIntPoint<int>&OutTargetLocation);
 };

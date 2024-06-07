@@ -7,6 +7,7 @@
 #include "SwordAttackVisualizerComponent.generated.h"
 
 class UActionScriptGeneratorComponent;
+class AStageGrid;
 
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -21,7 +22,7 @@ protected:
 
 public:
 
-	void Initialize(UActionScriptGeneratorComponent* InActionScriptGenerator);
+	void Initialize(AStageGrid* InStageGrid, UActionScriptGeneratorComponent* InActionScriptGenerator);
 
 public:
 
@@ -39,7 +40,9 @@ protected:
 
 protected:
 
-	UActionScriptGeneratorComponent* ActionScriptGenerator;
+	AStageGrid* StageGrid = nullptr;
+
+	UActionScriptGeneratorComponent* ActionScriptGenerator = nullptr;
 
 	AActor* Visualizer = nullptr;
 

@@ -4,17 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GridTypes.h"
+#include "StageCell.h"
 #include "GridMovementComponent.generated.h"
 
-// Forward Declarations
 class AStageGrid;
-class AStageCell;
 
 
 UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STEAKFRIES_API UGridMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+	protected:
+
+	AStageGrid* StageGrid = nullptr;
+
+	AStageCell* CurrentCell = nullptr;
+
+	const FVector LOCATION_OFFSET = FVector(0.0f, 0.0f, 5.0f);
 
 public:
 
@@ -25,7 +33,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	bool TryMoveToCell(AStageCell* ToCell);
+	bool TryMoveTo(AStageCell* Destination);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryMoveX(int X);
@@ -34,14 +42,6 @@ public:
 	bool TryMoveY(int Y);
 
 protected:
-
-	AStageGrid* StageGrid = nullptr;
-
-	AStageCell* CurrentCell = nullptr;
-
-	const FVector LOCATION_OFFSET = FVector(0.0f, 0.0f, 5.0f);
-
-protected:
-	virtual void BeginPlay() override;		
+	virtual void BeginPlay() override;
 
 };

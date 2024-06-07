@@ -8,8 +8,12 @@
 #include "StageGrid.h"
 
 
-void USwordAttackVisualizerComponent::Initialize(UActionScriptGeneratorComponent* InActionScriptGenerator)
+void USwordAttackVisualizerComponent::Initialize(AStageGrid* InStageGrid, UActionScriptGeneratorComponent* InActionScriptGenerator)
 {
+	check(IsValid(InStageGrid));
+
+	StageGrid = InStageGrid;
+
 	check(IsValid(InActionScriptGenerator));
 
 	ActionScriptGenerator = InActionScriptGenerator;
@@ -28,16 +32,17 @@ void USwordAttackVisualizerComponent::Reset()
 
 void USwordAttackVisualizerComponent::OnScriptActionAdded(AAction* Action)
 {
+	// TODO: replace with attack action check
 	if (Action->IsA(AMoveAction::StaticClass()))
 	{
 		return;
 	}
 
 	FTransform VisualizerTransform;
-	UE::Math::TIntPoint<int> GridPoint = Action->CellLocation->GetGridPoint();
+	UE::Math::TIntPoint<int> GridPoint = Action->GetCellLocation()->GetGridPoint();
 	GridPoint.Y++;
 
-	AStageCell* TargetCell = Action->StageGrid->GetCell(GridPoint);
+	AStageCell* TargetCell = StageGrid->GetCell(GridPoint);
 
 	FVector Location = TargetCell->GetActorLocation();
 	VisualizerTransform.SetComponents(FQuat::Identity, Location, FVector::OneVector);

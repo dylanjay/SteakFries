@@ -72,11 +72,13 @@ void ABattleGameMode::BeginPlay()
 
   UActionPointResourceComponent* ActionPointResourceComp = PlayerPawn->GetComponentByClass<UActionPointResourceComponent>();
 
+  UActionScriptPlayerComponent* ActionScriptPlayerComp = PlayerPawn->GetComponentByClass<UActionScriptPlayerComponent>();
+
   UActionScriptGeneratorComponent* ActionScriptGeneratorComp = PlayerPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
-  ActionScriptGeneratorComp->Initialize(ActionPointResourceComp, GridMovementComp, StageGrid);
+  ActionScriptGeneratorComp->Initialize(ActionScriptPlayerComp, ActionPointResourceComp, GridMovementComp, StageGrid);
 
   USwordAttackVisualizerComponent* SwordAttackVisualizerComp = PlayerPawn->GetComponentByClass<USwordAttackVisualizerComponent>();
-  SwordAttackVisualizerComp->Initialize(ActionScriptGeneratorComp);
+  SwordAttackVisualizerComp->Initialize(StageGrid, ActionScriptGeneratorComp);
 
   GridMovementVisualizerComp->Initialize(ActionScriptGeneratorComp);
   
@@ -89,13 +91,23 @@ void ABattleGameMode::BeginPlay()
     AEnemyController* EnemyController = GetWorld()->SpawnActor<AEnemyController>(EnemyControllerClass);
     check(IsValid(EnemyController));
 
-    EnemyController->SetPawn(EnemyPawn);
-    EnemyController->Initialize();
+    EnemyController->Possess(EnemyPawn);
+    EnemyController->Initialize(StageGrid);
 
     Pawns.Add(EnemyPawn);
 
     EnemyStartingPoint = new UE::Math::TIntPoint<int>(EnemyStartingPointArray[0], EnemyStartingPointArray[1]);
     StageGrid->InitializeOnGrid(EnemyPawn, *EnemyStartingPoint);
+
+    UGridMovementComponent* EnemyGridMovementComp = EnemyPawn->GetComponentByClass<UGridMovementComponent>();
+    check(IsValid(EnemyGridMovementComp));
+
+    UActionPointResourceComponent* EnemyActionPointResourceComp = EnemyPawn->GetComponentByClass<UActionPointResourceComponent>();
+
+    UActionScriptPlayerComponent* EnemyActionScriptPlayerComp = EnemyPawn->GetComponentByClass<UActionScriptPlayerComponent>();
+
+    UActionScriptGeneratorComponent* EnemyActionScriptGeneratorComp = EnemyPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
+    EnemyActionScriptGeneratorComp->Initialize(EnemyActionScriptPlayerComp, EnemyActionPointResourceComp, EnemyGridMovementComp, StageGrid);
   }
   
   TurnManager->Initialize(Pawns);

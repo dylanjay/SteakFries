@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
 #include "Action.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionComplete);
@@ -19,14 +19,16 @@ class STEAKFRIES_API AAction : public AActor
 	
 public:
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnActionComplete OnActionCompleteDelegate;
+
+protected:
+
 	UPROPERTY(EditDefaultsOnly)
 	float Cost = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float Delay = 1.0f;
-
-	UPROPERTY(BlueprintCallable, BlueprintAssignable)
-	FOnActionComplete OnActionCompleteDelegate;
+	float Delay = 0.5f;
 
 	UPROPERTY()
 	AStageGrid* StageGrid = nullptr;
@@ -39,10 +41,23 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Initialize(AStageGrid* InStageGrid, AStageCell* InCellLocation);
 
+	UFUNCTION(BlueprintCallable)
+	virtual bool CanPlay(AStageCell* CurrentCell);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void DoAction(APawn* Pawn);
+	void Play(APawn* Pawn);
+
+	UFUNCTION(BlueprintCallable)
+	float GetCost() const { return Cost; }
 
 	UFUNCTION(BlueprintCallable)
 	float GetDelay() const { return Delay; }
+
+	UFUNCTION(BlueprintCallable)
+	AStageCell* GetCellLocation() const { return CellLocation; }
+
+protected:
+
+	virtual void PlayInternal(APawn* Pawn);
 
 };

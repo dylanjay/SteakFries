@@ -2,11 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Action.h"
 #include "MoveAction.generated.h"
-
-class AStageCell;
 
 
 UCLASS()
@@ -14,19 +11,12 @@ class STEAKFRIES_API AMoveAction : public AAction
 {
 	GENERATED_BODY()
 
-public:
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int X;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int Y;
+protected:
 
 	UPROPERTY()
-	AStageCell* ToCell;
+	AStageCell* Destination = nullptr;
 
 public:
 
-	void FillEdgeData(AStageCell* InToCell);
-	
+	AStageCell* GetDestination() const { return Destination; }
 };

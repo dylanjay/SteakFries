@@ -6,9 +6,9 @@
 #include "EnemyController.h"
 #include "RangedEnemyController.generated.h"
 
-/**
- * 
- */
+#define TPoint UE::Math::TIntPoint<int>
+
+
 UCLASS()
 class STEAKFRIES_API ARangedEnemyController : public AEnemyController
 {

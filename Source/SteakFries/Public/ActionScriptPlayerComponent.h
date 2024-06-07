@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ActionScriptComponent.generated.h"
+#include "ActionScriptPlayerComponent.generated.h"
 
 class AAction;
 
@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnScriptComplete);
 
 
 UCLASS( BlueprintType, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class STEAKFRIES_API UActionScriptComponent : public UActorComponent
+class STEAKFRIES_API UActionScriptPlayerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

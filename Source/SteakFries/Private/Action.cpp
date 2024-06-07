@@ -10,6 +10,16 @@ void AAction::Initialize_Implementation(AStageGrid* InStageGrid, AStageCell* InC
   CellLocation = InCellLocation;
 }
 
-void AAction::DoAction_Implementation(APawn* Pawn)
+bool AAction::CanPlay(AStageCell* CurrentCell)
+{
+  return true;
+}
+
+void AAction::Play_Implementation(APawn* Pawn)
+{
+  PlayInternal(Pawn);
+}
+
+void AAction::PlayInternal(APawn* Pawn)
 {
 }

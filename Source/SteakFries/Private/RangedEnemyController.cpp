@@ -2,8 +2,13 @@
 
 
 #include "RangedEnemyController.h"
-#include "ActionScriptComponent.h"
+#include "ActionScriptPlayerComponent.h"
 #include "ActionScriptGeneratorComponent.h"
+#include "GridMovementComponent.h"
+#include "StageCell.h"
+#include "StageGrid.h"
+#include "PathMoveAction.h"
+
 
 void ARangedEnemyController::MoveInRange()
 {
@@ -14,11 +19,24 @@ void ARangedEnemyController::MoveInRange()
     return;
   }
 
-  // find shortest path to target
+  UE::Math::TIntPoint<int> CurrentLocation = GridMovementComp->GetCurrentCell()->GetGridPoint();
   
-  // move in line
+  if (CurrentLocation.X != TargetLocation.X)
+  {
+    TPoint VantagePoint = TPoint(TargetLocation.X, CurrentLocation.Y);
+    AStageCell* TargetCell = StageGrid->GetCell(VantagePoint);
 
-  ActionScript->PlayScript(ActionScriptGenerator->GetScript());
+    APathMoveAction* PathMove = GetWorld()->SpawnActor<APathMoveAction>(APathMoveAction::StaticClass());
+
+    PathMove->SetDestination(TargetCell);
+
+    if (!ActionScriptGenerator->TryAddAction(PathMove))
+    {
+      return;
+    }
+  }
+
+  ActionScriptPlayer->PlayScript(ActionScriptGenerator->GetScript());
 }
 
 void ARangedEnemyController::Attack()

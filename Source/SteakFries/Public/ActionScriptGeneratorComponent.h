@@ -7,6 +7,7 @@
 #include "ActionScriptGeneratorComponent.generated.h"
 
 class AAction;
+class UActionScriptPlayerComponent;
 class UActionPointResourceComponent;
 class UGridMovementComponent;
 class AStageCell;
@@ -29,7 +30,7 @@ public:
 
 public:
 
-	void Initialize(UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid);
+	void Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid);
 
 public:
 
@@ -45,10 +46,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<AAction*> GetScript() const { return Script; }
 
+	UFUNCTION()
+	void OnPlayScriptComplete();
+
 protected:
 	virtual void BeginPlay() override;
 
 protected:
+
+	UActionScriptPlayerComponent* ScriptPlayer = nullptr;
 
 	UActionPointResourceComponent* ActionPoints = nullptr;
 
