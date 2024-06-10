@@ -18,7 +18,7 @@ void UGridMovementVisualizerComponent::Initialize(UActionScriptGeneratorComponen
 
 void UGridMovementVisualizerComponent::Reset()
 {
-	for (int i = Arrows.Num() - 1; i >= 0; i--)
+	for (int32 i = Arrows.Num() - 1; i >= 0; i--)
 	{
 		GetWorld()->DestroyActor(Arrows[i]);
 	}

@@ -19,7 +19,7 @@ protected:
 	TArray<AStageCell*> Path;
 
 	// Start move to the "1st" node in path
-	int PathIndex = 1;
+	int32 PathIndex = 1;
 
 	FTimerHandle DelayTimerHandle;
 

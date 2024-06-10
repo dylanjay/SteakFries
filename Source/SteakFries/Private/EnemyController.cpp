@@ -53,7 +53,7 @@ void AEnemyController::OnMoveInRangeComplete()
   TurnManager->EndTurn();
 }
 
-bool AEnemyController::TryFindTarget(UE::Math::TIntPoint<int>& OutTargetLocation)
+bool AEnemyController::TryFindTarget(UE::Math::TIntPoint<int32>& OutTargetLocation)
 {
   ABattleGameMode* BattleGameMode = Cast<ABattleGameMode>(GetPawn()->GetWorld()->GetAuthGameMode());
 

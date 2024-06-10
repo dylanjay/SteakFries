@@ -30,7 +30,7 @@ bool UGridMovementComponent::TryMoveTo(AStageCell* Destination)
 	return true;
 }
 
-bool UGridMovementComponent::TryMoveX(int X)
+bool UGridMovementComponent::TryMoveX(int32 X)
 {
 	if (X == 0)
 	{
@@ -42,7 +42,7 @@ bool UGridMovementComponent::TryMoveX(int X)
 	return TryMoveTo(Destination);
 }
 
-bool UGridMovementComponent::TryMoveY(int Y)
+bool UGridMovementComponent::TryMoveY(int32 Y)
 {
 	if (Y == 0)
 	{

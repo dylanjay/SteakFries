@@ -22,7 +22,7 @@ protected:
 
 	APawn* EnemyPawn = nullptr;
 
-	UE::Math::TIntPoint<int> TargetLocation;
+	UE::Math::TIntPoint<int32> TargetLocation;
 
 	ATurnManager* TurnManager = nullptr;
 
@@ -49,5 +49,5 @@ protected:
 	UFUNCTION()
 	void OnMoveInRangeComplete();
 
-	bool TryFindTarget(UE::Math::TIntPoint<int>&OutTargetLocation);
+	bool TryFindTarget(UE::Math::TIntPoint<int32>&OutTargetLocation);
 };

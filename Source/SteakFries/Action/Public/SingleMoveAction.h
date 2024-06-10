@@ -17,10 +17,10 @@ class STEAKFRIES_API ASingleMoveAction : public AMoveAction
 public:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int X;
+	int32 X;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int Y;
+	int32 Y;
 
 public:
 

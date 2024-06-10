@@ -61,7 +61,7 @@ void ABattleGameMode::BeginPlay()
 
   Pawns.Add(PlayerPawn);
 
-  PlayerStartingPoint = new UE::Math::TIntPoint<int>(PlayerStartingPointArray[0], PlayerStartingPointArray[1]);
+  PlayerStartingPoint = new UE::Math::TIntPoint<int32>(PlayerStartingPointArray[0], PlayerStartingPointArray[1]);
   StageGrid->InitializeOnGrid(PlayerPawn, *PlayerStartingPoint);
 
   UGridMovementVisualizerComponent* GridMovementVisualizerComp = PlayerPawn->GetComponentByClass<UGridMovementVisualizerComponent>();
@@ -96,7 +96,7 @@ void ABattleGameMode::BeginPlay()
 
     Pawns.Add(EnemyPawn);
 
-    EnemyStartingPoint = new UE::Math::TIntPoint<int>(EnemyStartingPointArray[0], EnemyStartingPointArray[1]);
+    EnemyStartingPoint = new UE::Math::TIntPoint<int32>(EnemyStartingPointArray[0], EnemyStartingPointArray[1]);
     StageGrid->InitializeOnGrid(EnemyPawn, *EnemyStartingPoint);
 
     UGridMovementComponent* EnemyGridMovementComp = EnemyPawn->GetComponentByClass<UGridMovementComponent>();

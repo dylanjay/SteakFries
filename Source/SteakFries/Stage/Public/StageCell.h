@@ -13,7 +13,7 @@ class STEAKFRIES_API AStageCell : public AActor
 
 public:
 
-	void Initialize(int Col, int Row);
+	void Initialize(int32 Col, int32 Row);
 
 	void Fill(AActor* Actor);
 
@@ -29,7 +29,7 @@ protected:
 
 	AActor* FillingActor;
 
-	UE::Math::TIntPoint<int>* GridPoint;
+	UE::Math::TIntPoint<int32>* GridPoint;
 
 public:
 
@@ -52,11 +52,11 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	TArray<int> BP_GetGridPoint() const;
+	TArray<int32> BP_GetGridPoint() const;
 
 public:
 
-	UE::Math::TIntPoint<int> GetGridPoint() const
+	UE::Math::TIntPoint<int32> GetGridPoint() const
 	{
 		return *GridPoint;
 	}

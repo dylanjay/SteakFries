@@ -32,7 +32,7 @@ protected:
 	TSubclassOf<APawn> PlayerPawnClass;
 
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Player Starting Point"))
-	TArray<int> PlayerStartingPointArray = { 3, 0 };
+	TArray<int32> PlayerStartingPointArray = { 3, 0 };
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> EnemyPawnClass;
@@ -41,7 +41,7 @@ protected:
 	TSubclassOf<AEnemyController> EnemyControllerClass;
 
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Enemy Starting Point"))
-	TArray<int> EnemyStartingPointArray = { 3, 5 };
+	TArray<int32> EnemyStartingPointArray = { 3, 5 };
 
 protected:
 
@@ -57,9 +57,9 @@ protected:
 	UPROPERTY()
 	APawn* PlayerPawn;
 
-	UE::Math::TIntPoint<int>* PlayerStartingPoint;
+	UE::Math::TIntPoint<int32>* PlayerStartingPoint;
 
-	UE::Math::TIntPoint<int>* EnemyStartingPoint;
+	UE::Math::TIntPoint<int32>* EnemyStartingPoint;
 
 public:
 

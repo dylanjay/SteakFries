@@ -3,9 +3,9 @@
 
 #include "StageCell.h"
 
-void AStageCell::Initialize(int Col, int Row)
+void AStageCell::Initialize(int32 Col, int32 Row)
 {
-	GridPoint = new UE::Math::TIntPoint<int>(Col, Row);
+	GridPoint = new UE::Math::TIntPoint<int32>(Col, Row);
 }
 
 void AStageCell::Fill(AActor* Actor)
@@ -23,9 +23,9 @@ AActor* AStageCell::Empty()
 	return Actor;
 }
 
-TArray<int> AStageCell::BP_GetGridPoint() const
+TArray<int32> AStageCell::BP_GetGridPoint() const
 {
-	TArray<int> Array = { GridPoint->X, GridPoint->Y, };
+	TArray<int32> Array = { GridPoint->X, GridPoint->Y, };
 	return Array;
 }
 

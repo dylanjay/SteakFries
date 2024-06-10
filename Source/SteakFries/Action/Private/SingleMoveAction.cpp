@@ -8,7 +8,7 @@ bool ASingleMoveAction::CanPlay(AStageCell* CurrentCell)
 {
 	AStageCell* Start = CurrentCell;
 
-	UE::Math::TIntPoint<int> CurrentLocation = Start->GetGridPoint();
+	UE::Math::TIntPoint<int32> CurrentLocation = Start->GetGridPoint();
 
 	if (X != 0)
 	{

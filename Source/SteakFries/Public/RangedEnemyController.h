@@ -6,7 +6,7 @@
 #include "EnemyController.h"
 #include "RangedEnemyController.generated.h"
 
-#define TPoint UE::Math::TIntPoint<int>
+#define TPoint UE::Math::TIntPoint<int32>
 
 
 UCLASS()

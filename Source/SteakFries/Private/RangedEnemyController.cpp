@@ -19,7 +19,7 @@ void ARangedEnemyController::MoveInRange()
     return;
   }
 
-  UE::Math::TIntPoint<int> CurrentLocation = GridMovementComp->GetCurrentCell()->GetGridPoint();
+  UE::Math::TIntPoint<int32> CurrentLocation = GridMovementComp->GetCurrentCell()->GetGridPoint();
   
   if (CurrentLocation.X != TargetLocation.X)
   {

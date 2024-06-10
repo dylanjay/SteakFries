@@ -36,10 +36,10 @@ public:
 	bool TryMoveTo(AStageCell* Destination);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	bool TryMoveX(int X);
+	bool TryMoveX(int32 X);
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	bool TryMoveY(int Y);
+	bool TryMoveY(int32 Y);
 
 protected:
 	virtual void BeginPlay() override;
