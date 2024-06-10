@@ -216,6 +216,7 @@ bool AStageGrid::IsFilled(const UE::Math::TIntPoint<int>& Point) const
 
 AStageCell* AStageGrid::GetCell(const TArray<int>& PointArray) const
 {
+	check(PointArray.Num() >= 2);
 	UE::Math::TIntPoint<int> Point(PointArray[0], PointArray[1]);
 	return GetCell(Point);
 }

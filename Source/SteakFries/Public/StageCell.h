@@ -52,12 +52,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	TArray<int> BP_GetGridPoint() const
-	{
-		TArray<int> Array;
-		Array.Init(GridPoint->X, GridPoint->Y);
-		return Array;
-	}
+	TArray<int> BP_GetGridPoint() const;
 
 public:
 

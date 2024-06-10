@@ -23,6 +23,12 @@ AActor* AStageCell::Empty()
 	return Actor;
 }
 
+TArray<int> AStageCell::BP_GetGridPoint() const
+{
+	TArray<int> Array = { GridPoint->X, GridPoint->Y, };
+	return Array;
+}
+
 AStageCell::~AStageCell()
 {
 	delete GridPoint;
