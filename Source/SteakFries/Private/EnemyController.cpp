@@ -61,7 +61,7 @@ bool AEnemyController::TryFindTarget(UE::Math::TIntPoint<int32>& OutTargetLocati
 
   UGridMovementComponent* PlayerMovementComp = PlayerPawn->GetComponentByClass<UGridMovementComponent>();
 
-  OutTargetLocation = PlayerMovementComp->GetCurrentCell()->GetGridPoint();
+  OutTargetLocation = PlayerMovementComp->GetCurrentCell()->GetPoint();
 
   return true;
 }

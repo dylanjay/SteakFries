@@ -39,7 +39,7 @@ void USwordAttackVisualizerComponent::OnScriptActionAdded(AAction* Action)
 	}
 
 	FTransform VisualizerTransform;
-	UE::Math::TIntPoint<int32> GridPoint = Action->GetCellLocation()->GetGridPoint();
+	UE::Math::TIntPoint<int32> GridPoint = Action->GetCellLocation()->GetPoint();
 	GridPoint.Y++;
 
 	AStageCell* TargetCell = StageGrid->GetCell(GridPoint);
