@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// All rights reserved
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GridTypes.h"
 #include "StageCell.h"
+#include "CardinalPathFinding.h"
 #include "StageGrid.generated.h"
 
 #define TPoint UE::Math::TIntPoint<int32>
@@ -15,36 +16,6 @@ UCLASS()
 class STEAKFRIES_API AStageGrid : public AActor
 {
 	GENERATED_BODY()
-
-	struct CellSearchData
-	{
-		AStageCell* Cell = nullptr;
-		AStageCell* Parent = nullptr;
-
-		bool Visited = false;
-
-		float Cost = FLT_MAX;
-		float MoveCost = FLT_MAX;
-		float HeuristicCost = FLT_MAX;
-
-		CellSearchData(AStageCell* InCell)
-		{
-			Cell = InCell;
-		}
-
-		static bool Compare(const CellSearchData &left, const CellSearchData &right)
-		{
-			return left.Cost <= right.Cost;
-		}
-
-		float CalculateHeuristicCost(AStageCell* Destination)
-		{
-			// Manhattan Distance
-			TPoint CellPoint = Cell->GetGridPoint();
-			TPoint DestinationPoint = Destination->GetGridPoint();
-			return std::abs(CellPoint.X - DestinationPoint.X) + std::abs(CellPoint.Y - DestinationPoint.Y);
-		}
-	};
 
 protected:
 
@@ -63,7 +34,7 @@ protected:
 
 	TMap<AActor*, AStageCell*> CharacterCells;
 
-	TArray<const UE::Math::TIntPoint<int32>*> CardinalDirections;
+	CardinalPathFinding<AStageCell>* PathFinding = nullptr;
 	
 public:	
 
@@ -105,20 +76,20 @@ public:
 
 	AStageGrid();
 
+	~AStageGrid();
+
 	AStageCell* GetCell(const UE::Math::TIntPoint<int32>& Point) const;
 
 	bool IsValidPoint(const UE::Math::TIntPoint<int32>& Point) const;
 
-	bool IsFilled(const UE::Math::TIntPoint<int32>& Point) const;
+	bool IsBlocked(const UE::Math::TIntPoint<int32>& Point) const;
 
-	TArray<const UE::Math::TIntPoint<int32>*> GetCardinalDirections() const { return CardinalDirections; }
+	TArray<const UE::Math::TIntPoint<int32>*> GetCardinalDirections() const;
 
 protected:
 
 	void CreateGrid();
 
 	virtual void BeginPlay() override;
-
-	TArray<AStageCell*> TracePath(const TArray<TArray<CellSearchData>>& DataMatrix, AStageCell* Start, AStageCell* Destination);
 
 };

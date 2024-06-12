@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PathFindable2D.h"
 #include "StageCell.generated.h"
 
 UCLASS()
-class STEAKFRIES_API AStageCell : public AActor
+class STEAKFRIES_API AStageCell : public AActor, public IPathFindable2D
 {
 	GENERATED_BODY()
 
@@ -46,7 +47,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	bool IsFilled() const
+	virtual bool IsBlocked() const override
 	{
 		return FillingActor != nullptr;
 	}
@@ -56,7 +57,7 @@ public:
 
 public:
 
-	UE::Math::TIntPoint<int32> GetGridPoint() const
+	virtual UE::Math::TIntPoint<int32> GetPoint() const override
 	{
 		return *GridPoint;
 	}
