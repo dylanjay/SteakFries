@@ -11,6 +11,8 @@
 
 #define TPoint UE::Math::TIntPoint<int32>
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBeginCursorOverCell, AStageCell*, Cell);
+
 
 UCLASS()
 class STEAKFRIES_API AStageGrid : public AActor
@@ -35,10 +37,12 @@ protected:
 	TMap<AActor*, AStageCell*> CharacterCells;
 
 	CardinalPathFinding<AStageCell>* PathFinding = nullptr;
+
+	FOnBeginCursorOverCell OnBeginCursorOverCellDelegate;
 	
 public:	
 
-	bool InitializeOnGrid(APawn* Pawn, const UE::Math::TIntPoint<int32>& StartingPoint);
+	bool InitializeOnGrid(APawn* Pawn, const TPoint& StartingPoint);
 
 public:
 
@@ -72,19 +76,22 @@ public:
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	bool TryFindPathToCell(AStageCell* Start, AStageCell* Destination, TArray<AStageCell*>& OutPath);
 
+	UFUNCTION(BlueprintCallable)
+	void OnBeginCursorOverCell(AStageCell* Cell);
+
 public:
 
 	AStageGrid();
 
-	~AStageGrid();
+	virtual ~AStageGrid();
 
-	AStageCell* GetCell(const UE::Math::TIntPoint<int32>& Point) const;
+	AStageCell* GetCell(const TPoint& Point) const;
 
-	bool IsValidPoint(const UE::Math::TIntPoint<int32>& Point) const;
+	bool IsValidPoint(const TPoint& Point) const;
 
-	bool IsBlocked(const UE::Math::TIntPoint<int32>& Point) const;
+	bool IsBlocked(const TPoint& Point) const;
 
-	TArray<const UE::Math::TIntPoint<int32>*> GetCardinalDirections() const;
+	TArray<const TPoint*> GetCardinalDirections() const;
 
 protected:
 

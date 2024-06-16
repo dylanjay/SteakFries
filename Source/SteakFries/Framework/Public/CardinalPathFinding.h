@@ -6,7 +6,7 @@
 
 #define TPoint UE::Math::TIntPoint<int32>
 
-template<PathFindable T>
+template<IsPathFindable T>
 class STEAKFRIES_API CardinalPathFinding : public PathFinding2D<T>
 {
 protected:
@@ -17,9 +17,7 @@ public:
 
   CardinalPathFinding();
 
-  ~CardinalPathFinding();
-
-public:
+  virtual ~CardinalPathFinding();
 
   virtual TArray<const TPoint*> GetSearchPoints() override;
 

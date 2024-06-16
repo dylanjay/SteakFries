@@ -2,44 +2,9 @@
 
 
 #include "PathFinding2D.h"
-#include <stack>
-#include <set>
 
 
-template<PathFindable T>
-TArray<T*> PathFinding2D<T>::TracePath(const TArray<TArray<SearchData>>& DataMatrix, T* Start, T* Destination)
-{
-	TArray<T*> Path;
-
-	T* Cur = Destination;
-
-	std::stack<T*> Stack;
-
-	while (DataMatrix[Cur->GetX()][Cur->GetY()].Node != Start)
-	{
-		check(Cur != nullptr);
-
-		Stack.push(Cur);
-		Cur = DataMatrix[Cur->GetX()][Cur->GetY()].Parent;
-	}
-
-	Path.Add(Cur);
-	while (Stack.size() > 0)
-	{
-		Path.Add(Stack.top());
-		Stack.pop();
-	}
-
-	return Path;
-}
-
-template<PathFindable T>
-bool PathFinding2D<T>::IsValidPoint(TPoint Point, int32 Width, int32 Height)
-{
-	return Point.X >= 0 && Point.Y >= 0 && Point.X < Width && Point.Y < Height;
-}
-
-template<PathFindable T>
+template<IsPathFindable T>
 bool PathFinding2D<T>::TryFindPath(const TArray<TArray<T*>>& Grid, T* Start, T* Destination, TArray<T*>& OutPath)
 {
 	check(Start != nullptr);
@@ -131,4 +96,37 @@ bool PathFinding2D<T>::TryFindPath(const TArray<TArray<T*>>& Grid, T* Start, T* 
 	}
 
 	return false;
+}
+
+template<IsPathFindable T>
+TArray<T*> PathFinding2D<T>::TracePath(const TArray<TArray<SearchData>>& DataMatrix, T* Start, T* Destination)
+{
+	TArray<T*> Path;
+
+	T* Cur = Destination;
+
+	std::stack<T*> Stack;
+
+	while (DataMatrix[Cur->GetX()][Cur->GetY()].Node != Start)
+	{
+		check(Cur != nullptr);
+
+		Stack.push(Cur);
+		Cur = DataMatrix[Cur->GetX()][Cur->GetY()].Parent;
+	}
+
+	Path.Add(Cur);
+	while (Stack.size() > 0)
+	{
+		Path.Add(Stack.top());
+		Stack.pop();
+	}
+
+	return Path;
+}
+
+template<IsPathFindable T>
+bool PathFinding2D<T>::IsValidPoint(TPoint Point, int32 Width, int32 Height)
+{
+	return Point.X >= 0 && Point.Y >= 0 && Point.X < Width && Point.Y < Height;
 }

@@ -8,6 +8,7 @@
 #include "ActionScriptGeneratorComponent.h"
 #include "GridMovementComponent.h"
 #include "StageCell.h"
+#include "Enemy.h"
 
 
 void AEnemyController::Initialize(AStageGrid* InStageGrid)
@@ -16,30 +17,30 @@ void AEnemyController::Initialize(AStageGrid* InStageGrid)
 
   StageGrid = InStageGrid;
 
-  EnemyPawn = GetPawn();
+  Enemy = Cast<AEnemy>(GetPawn());
+  check(IsValid(Enemy));
 
-  check(IsValid(EnemyPawn));
-
-  TurnManager = Cast<ABattleGameMode>(EnemyPawn->GetWorld()->GetAuthGameMode())->GetTurnManager();
+  TurnManager = Cast<ABattleGameMode>(Enemy->GetWorld()->GetAuthGameMode())->GetTurnManager();
   check(IsValid(TurnManager));
 
-  ActionScriptGenerator = EnemyPawn->GetComponentByClass<UActionScriptGeneratorComponent>();
+  ActionScriptGenerator = Enemy->GetComponentByClass<UActionScriptGeneratorComponent>();
   check(IsValid(ActionScriptGenerator));
 
-  ActionScriptPlayer = EnemyPawn->GetComponentByClass<UActionScriptPlayerComponent>();
+  ActionScriptPlayer = Enemy->GetComponentByClass<UActionScriptPlayerComponent>();
   check(IsValid(ActionScriptPlayer));
 
   ActionScriptPlayer->OnScriptComplete.AddUniqueDynamic(this, &AEnemyController::OnMoveInRangeComplete);
 
-  GridMovementComp = EnemyPawn->GetComponentByClass<UGridMovementComponent>();
+  GridMovementComp = Enemy->GetComponentByClass<UGridMovementComponent>();
   check(IsValid(GridMovementComp));
 }
 
-void AEnemyController::SetAttackIntention()
+void AEnemyController::SetIntention()
 {
+  Enemy->TrySetState(EEnemyState::SettingIntention);
 }
 
-void AEnemyController::Attack()
+void AEnemyController::ExecuteTurn()
 {
 }
 
@@ -49,7 +50,7 @@ void AEnemyController::MoveInRange()
 
 void AEnemyController::OnMoveInRangeComplete()
 {
-  SetAttackIntention();
+  SetIntention();
   TurnManager->EndTurn();
 }
 

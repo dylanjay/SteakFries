@@ -4,23 +4,48 @@
 #include "TurnManager.h"
 #include "PaperFlipbookComponent.h"
 #include "EnemyController.h"
+#include "Enemy.h"
 
 
-void ATurnManager::Initialize(TArray<APawn*> Controllers)
+void ATurnManager::Initialize(TArray<APawn*> Pawns)
 {
-	for (APawn* Controller : Controllers)
+	for (APawn* Pawn : Pawns)
 	{
-		check(IsValid(Controller));
+		check(IsValid(Pawn));
 
-		TrySetInput(Controller, false);
+		TurnQueue.Enqueue(Pawn);
 
-		TurnQueue.Enqueue(Controller);
+		AEnemyController* EnemyController = nullptr;
+
+		if (TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController))
+		{
+			EnemyControllers.Add(EnemyController);
+
+			// On Enemy Intention Set
+		}
 	}
 }
 
 void ATurnManager::Start()
 {
-	NextTurn();
+	TrySetState(ETurnManagerState::SetEnemyIntentions);
+}
+
+void ATurnManager::SetEnemyIntentions()
+{
+	for (AEnemyController* EnemyController : EnemyControllers)
+	{
+		if (EnemyController->GetEnemy()->GetState() >= EEnemyState::SettingIntention)
+		{
+			continue;
+		}
+
+		EnemyController->SetIntention();
+
+		return;
+	}
+
+	TrySetState(ETurnManagerState::TurnCycle);
 }
 
 void ATurnManager::NextTurn()
@@ -29,21 +54,10 @@ void ATurnManager::NextTurn()
 
 	check(IsValid(CurrentTurnPawn));
 
-	TrySetInput(CurrentTurnPawn, true);
-
 	AEnemyController* EnemyController = nullptr;
-
-	bool IsPlayerTurn = !TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController);
-	
-	if (IsPlayerTurn)
+	if (TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController))
 	{
-		TrySetInput(CurrentTurnPawn, true);
-	}
-	else
-	{
-		check(IsValid(EnemyController));
-		
-		EnemyController->MoveInRange();
+		EnemyController->ExecuteTurn();
 	}
 
 	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
@@ -58,8 +72,6 @@ void ATurnManager::EndTurn()
 {
 	check(IsValid(CurrentTurnPawn));
 
-	TrySetInput(CurrentTurnPawn, false);
-
 	TurnQueue.Enqueue(CurrentTurnPawn);
 
 	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
@@ -72,41 +84,25 @@ void ATurnManager::EndTurn()
 	NextTurn();
 }
 
-void ATurnManager::BeginPlay()
+bool ATurnManager::TrySetState(ETurnManagerState NewState)
 {
-	Super::BeginPlay();
-}
-
-bool ATurnManager::TrySetInput(APawn* Pawn, bool enable)
-{
-	APlayerController* PlayerController = nullptr;
-	if (!TryGetPlayerController(Pawn->GetController(), PlayerController))
+	if (State == NewState)
 	{
 		return false;
 	}
+	
+	State = NewState;
 
-	if (enable)
+	switch (State)
 	{
-		Pawn->EnableInput(PlayerController);
-	}
-	else
-	{
-		Pawn->DisableInput(PlayerController);
-	}
-	return true;
-}
-
-bool ATurnManager::TryGetPlayerController(AController* Controller, APlayerController*& OutPlayerController)
-{
-	OutPlayerController = nullptr;
-
-	check(IsValid(Controller));
-	if (!Controller->IsA(APlayerController::StaticClass()))
-	{
-		return false;
+	case ETurnManagerState::SetEnemyIntentions:
+		SetEnemyIntentions();
+		break;
+	case ETurnManagerState::TurnCycle:
+		NextTurn();
+		break;
 	}
 
-	OutPlayerController = Cast<APlayerController>(Controller);
 	return true;
 }
 

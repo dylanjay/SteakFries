@@ -14,32 +14,10 @@ void ARangedEnemyController::MoveInRange()
 {
   Super::MoveInRange();
 
-  if (!TryFindTarget(TargetLocation))
-  {
-    return;
-  }
-
-  UE::Math::TIntPoint<int32> CurrentLocation = GridMovementComp->GetCurrentCell()->GetPoint();
   
-  if (CurrentLocation.X != TargetLocation.X)
-  {
-    TPoint VantagePoint = TPoint(TargetLocation.X, CurrentLocation.Y);
-    AStageCell* TargetCell = StageGrid->GetCell(VantagePoint);
-
-    APathMoveAction* PathMove = GetWorld()->SpawnActor<APathMoveAction>(APathMoveAction::StaticClass());
-
-    PathMove->SetDestination(TargetCell);
-
-    if (!ActionScriptGenerator->TryAddAction(PathMove))
-    {
-      return;
-    }
-  }
-
-  ActionScriptPlayer->PlayScript(ActionScriptGenerator->GetScript());
 }
 
-void ARangedEnemyController::Attack()
+void ARangedEnemyController::ExecuteTurn()
 {
 
 }

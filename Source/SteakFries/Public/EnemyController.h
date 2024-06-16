@@ -7,6 +7,7 @@
 #include "EnemyController.generated.h"
 
 class APawn;
+class AEnemy;
 class ATurnManager;
 class UActionScriptGeneratorComponent;
 class UActionScriptPlayerComponent;
@@ -20,7 +21,7 @@ class STEAKFRIES_API AEnemyController : public AAIController
 
 protected:
 
-	APawn* EnemyPawn = nullptr;
+	AEnemy* Enemy = nullptr;
 
 	UE::Math::TIntPoint<int32> TargetLocation;
 
@@ -38,11 +39,13 @@ public:
 
 	virtual void Initialize(AStageGrid* InStageGrid);
 
-	virtual void SetAttackIntention();
+	virtual void SetIntention();
 
-	virtual void Attack();
+	virtual void ExecuteTurn();
 
 	virtual void MoveInRange();
+
+	AEnemy* GetEnemy() const { return Enemy; }
 
 protected:
 

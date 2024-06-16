@@ -7,6 +7,9 @@
 #include "PathFindable2D.h"
 #include "StageCell.generated.h"
 
+class AStageGrid;
+
+
 UCLASS()
 class STEAKFRIES_API AStageCell : public AActor, public IPathFindable2D
 {
@@ -14,7 +17,7 @@ class STEAKFRIES_API AStageCell : public AActor, public IPathFindable2D
 
 public:
 
-	void Initialize(int32 Col, int32 Row);
+	void Initialize(AStageGrid* OwningGrid, int32 Col, int32 Row);
 
 	void Fill(AActor* Actor);
 
@@ -28,7 +31,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float Length = 100.0f;
 
-	AActor* FillingActor;
+	AStageGrid* StageGrid = nullptr;
+
+	AActor* FillingActor = nullptr;
 
 	UE::Math::TIntPoint<int32>* GridPoint;
 
@@ -51,6 +56,9 @@ public:
 	{
 		return FillingActor != nullptr;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	AStageGrid* GetStageGrid() const { return StageGrid; }
 
 	UFUNCTION(BlueprintCallable)
 	TArray<int32> BP_GetGridPoint() const;

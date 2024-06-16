@@ -2,7 +2,7 @@
 
 #pragma once
 
-class IPathFindable2D
+class STEAKFRIES_API IPathFindable2D
 {
 public:
 

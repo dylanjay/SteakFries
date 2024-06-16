@@ -1,6 +1,6 @@
 #include "CardinalPathFinding.h"
 
-template<PathFindable T>
+template<IsPathFindable T>
 CardinalPathFinding<T>::CardinalPathFinding()
 {
 	CardinalDirections =
@@ -12,7 +12,7 @@ CardinalPathFinding<T>::CardinalPathFinding()
 	};
 }
 
-template<PathFindable T>
+template<IsPathFindable T>
 CardinalPathFinding<T>::~CardinalPathFinding()
 {
 	for (int i = 0; i < CardinalDirections.Num(); i++)
@@ -21,17 +21,17 @@ CardinalPathFinding<T>::~CardinalPathFinding()
 	}
 }
 
-template<PathFindable T>
+template<IsPathFindable T>
+TArray<const TPoint*> CardinalPathFinding<T>::GetSearchPoints()
+{
+	return CardinalDirections;
+}
+
+template<IsPathFindable T>
 float CardinalPathFinding<T>::CalculateHeuristicCost(T* Start, T* Destination)
 {
 	// Manhattan Distance
 	TPoint StartPoint = Start->GetPoint();
 	TPoint DestinationPoint = Destination->GetPoint();
 	return std::abs(StartPoint.X - DestinationPoint.X) + std::abs(StartPoint.Y - DestinationPoint.Y);
-}
-
-template<PathFindable T>
-TArray<const TPoint*> CardinalPathFinding<T>::GetSearchPoints()
-{
-	return CardinalDirections;
 }

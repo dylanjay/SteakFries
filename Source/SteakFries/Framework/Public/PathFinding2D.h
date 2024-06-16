@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "PathFindable2D.h"
+#include <stack>
+#include <set>
 
 #define TPoint UE::Math::TIntPoint<int32>
 
 template<typename T>
-concept PathFindable = std::is_base_of<IPathFindable2D, T>::value;
+concept IsPathFindable = std::is_base_of<IPathFindable2D, T>::value;
 
-template<PathFindable T>
+template<IsPathFindable T>
 class STEAKFRIES_API PathFinding2D
 {
 protected:
@@ -40,8 +42,6 @@ protected:
 public:
 
 	bool TryFindPath(const TArray<TArray<T*>>& Grid, T* Start, T* Destination, TArray<T*>& OutPath);
-
-public:
 
 	virtual TArray<const TPoint*> GetSearchPoints() = 0;
 

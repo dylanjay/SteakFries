@@ -8,6 +8,14 @@
 
 class AEnemyController;
 
+UENUM(BlueprintType)
+enum class ETurnManagerState : uint8
+{
+	Invalid UMETA(DisplayName = "Invalid"),
+	SetEnemyIntentions UMETA(DisplayName = "Set Enemy Intentions"),
+	TurnCycle UMETA(DisplayName = "Turn Cycle"),
+};
+
 
 UCLASS(Blueprintable, BlueprintType)
 class STEAKFRIES_API ATurnManager : public AActor
@@ -16,9 +24,11 @@ class STEAKFRIES_API ATurnManager : public AActor
 	
 public:	
 
-	void Initialize(TArray<APawn*> APawn);
+	void Initialize(TArray<APawn*> Pawns);
 
 	void Start();
+
+	void SetEnemyIntentions();
 
 	void NextTurn();
 
@@ -27,22 +37,20 @@ public:
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	void EndTurn();
 
-	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
-	bool TrySetInput(APawn* Pawn, bool enable);
-
-	UFUNCTION(BlueprintCallable)
-	bool TryGetPlayerController(AController* Controller, APlayerController*& OutPlayerController);
-
 	UFUNCTION(BlueprintCallable)
 	bool TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController);
 
 protected:
 
-	virtual void BeginPlay() override;
+	bool TrySetState(ETurnManagerState NewState);
 
 protected:
 
+	ETurnManagerState State = ETurnManagerState::Invalid;
+
 	TQueue<APawn*> TurnQueue;
+
+	TArray<AEnemyController*> EnemyControllers;
 
 	APawn* CurrentTurnPawn = nullptr;
 };

@@ -18,6 +18,6 @@ public:
 
 	virtual void MoveInRange() override;
 
-	virtual void Attack() override;
+	virtual void ExecuteTurn() override;
 	
 };

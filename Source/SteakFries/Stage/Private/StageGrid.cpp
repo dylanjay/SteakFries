@@ -15,7 +15,7 @@ bool AStageGrid::CanMoveX(AStageCell* FromCell, int32 X) const
 		return true;
 	}
 
-	UE::Math::TIntPoint<int32> CurrentPoint = FromCell->GetPoint();
+	TPoint CurrentPoint = FromCell->GetPoint();
 
 	if ((X > 0 && CurrentPoint.X >= Width - X) ||
 		(X < 0 && CurrentPoint.X < -X))
@@ -24,7 +24,7 @@ bool AStageGrid::CanMoveX(AStageCell* FromCell, int32 X) const
 	}
 
 	int32 Direction = X > 0 ? 1 : -1;
-	UE::Math::TIntPoint<int32> NextCellPoint = CurrentPoint;
+	TPoint NextCellPoint = CurrentPoint;
 	NextCellPoint.X += Direction;
 	AStageCell* NextCell = GetCell(NextCellPoint);
 
@@ -57,7 +57,7 @@ bool AStageGrid::CanMoveY(AStageCell* FromCell, int32 Y) const
 		return true;
 	}
 
-	UE::Math::TIntPoint<int32> CurrentPoint = FromCell->GetPoint();
+	TPoint CurrentPoint = FromCell->GetPoint();
 
 	if ((Y > 0 && CurrentPoint.Y >= Height - Y) ||
 		(Y < 0 && CurrentPoint.Y < -Y ))
@@ -66,7 +66,7 @@ bool AStageGrid::CanMoveY(AStageCell* FromCell, int32 Y) const
 	}
 
 	int32 Direction = Y > 0 ? 1 : -1;
-	UE::Math::TIntPoint<int32> NextCellPoint = CurrentPoint;
+	TPoint NextCellPoint = CurrentPoint;
 	NextCellPoint.Y += Direction;
 	AStageCell* NextCell = GetCell(NextCellPoint);
 
@@ -99,7 +99,7 @@ AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int32 X)
 		return FromCell;
 	}
 
-	UE::Math::TIntPoint<int32> CurrentPoint = FromCell->GetPoint();
+	TPoint CurrentPoint = FromCell->GetPoint();
 
 	if ((X > 0 && CurrentPoint.X >= Width - X) ||
 		(X < 0 && CurrentPoint.X < -X))
@@ -108,7 +108,7 @@ AStageCell* AStageGrid::TryMoveX(AStageCell* FromCell, int32 X)
 	}
 
 	int32 Direction = X > 0 ? 1 : -1;
-	UE::Math::TIntPoint<int32> NextPoint = CurrentPoint;
+	TPoint NextPoint = CurrentPoint;
 	NextPoint.X += Direction;
 	AStageCell* NextCell = GetCell(NextPoint);
 
@@ -141,7 +141,7 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int32 Y)
 		return FromCell;
 	}
 
-	UE::Math::TIntPoint<int32> CurrentPoint = FromCell->GetPoint();
+	TPoint CurrentPoint = FromCell->GetPoint();
 
 	if ((Y > 0 && CurrentPoint.Y >= Height - Y) ||
 		(Y < 0 && CurrentPoint.Y < -Y))
@@ -150,7 +150,7 @@ AStageCell* AStageGrid::TryMoveY(AStageCell* FromCell, int32 Y)
 	}
 
 	int32 Direction = Y > 0 ? 1 : -1;
-	UE::Math::TIntPoint<int32> NextPoint = CurrentPoint;
+	TPoint NextPoint = CurrentPoint;
 	NextPoint.Y += Direction;
 	AStageCell* NextCell = GetCell(NextPoint);
 
@@ -188,11 +188,11 @@ AStageCell* AStageGrid::FindCharacter(AActor* Actor) const
 
 bool AStageGrid::IsValidPoint(const TArray<int32>& PointArray) const
 {
-	UE::Math::TIntPoint<int32> Point(PointArray[0], PointArray[1]);
+	TPoint Point(PointArray[0], PointArray[1]);
 	return IsValidPoint(Point);
 } 
 
-bool AStageGrid::IsValidPoint(const UE::Math::TIntPoint<int32>& Point) const
+bool AStageGrid::IsValidPoint(const TPoint& Point) const
 {
 	if (Point.X < 0 || Point.X >= Width)
 	{
@@ -207,14 +207,14 @@ bool AStageGrid::IsValidPoint(const UE::Math::TIntPoint<int32>& Point) const
 	return true;
 }
 
-bool AStageGrid::IsBlocked(const UE::Math::TIntPoint<int32>& Point) const
+bool AStageGrid::IsBlocked(const TPoint& Point) const
 {
 	check(IsValidPoint(Point));
 
 	return GetCell(Point)->IsBlocked();
 }
 
-TArray<const UE::Math::TIntPoint<int32>*> AStageGrid::GetCardinalDirections() const
+TArray<const TPoint*> AStageGrid::GetCardinalDirections() const
 {
 	check(PathFinding != nullptr);
 	return PathFinding->GetSearchPoints();
@@ -223,7 +223,7 @@ TArray<const UE::Math::TIntPoint<int32>*> AStageGrid::GetCardinalDirections() co
 AStageCell* AStageGrid::GetCell(const TArray<int32>& PointArray) const
 {
 	check(PointArray.Num() >= 2);
-	UE::Math::TIntPoint<int32> Point(PointArray[0], PointArray[1]);
+	TPoint Point(PointArray[0], PointArray[1]);
 	return GetCell(Point);
 }
 
@@ -237,7 +237,7 @@ AStageGrid::~AStageGrid()
 	delete(PathFinding);
 }
 
-AStageCell* AStageGrid::GetCell(const UE::Math::TIntPoint<int32>& Point) const
+AStageCell* AStageGrid::GetCell(const TPoint& Point) const
 {
 	if (Point.X >= 0 && Point.X < Width && Point.Y >= 0 && Point.Y < Height)
 	{
@@ -248,7 +248,7 @@ AStageCell* AStageGrid::GetCell(const UE::Math::TIntPoint<int32>& Point) const
 	return nullptr;
 }
 
-bool AStageGrid::InitializeOnGrid(APawn* Pawn, const UE::Math::TIntPoint<int32>& StartingPoint)
+bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TPoint& StartingPoint)
 {
 	if (!IsValid(Pawn))
 	{
@@ -280,6 +280,16 @@ bool AStageGrid::TryFindPathToCell(AStageCell* Start, AStageCell* Destination, T
 	check(PathFinding != nullptr);
 
 	return PathFinding->TryFindPath(Grid, Start, Destination, OutPath);
+}
+
+void AStageGrid::OnBeginCursorOverCell(AStageCell* Cell)
+{
+	check(IsValid(Cell));
+
+	if (OnBeginCursorOverCellDelegate.IsBound())
+	{
+		OnBeginCursorOverCellDelegate.Broadcast(Cell);
+	}
 }
 
 void AStageGrid::CreateGrid()
@@ -316,7 +326,7 @@ void AStageGrid::CreateGrid()
 				Cell = GetWorld()->SpawnActor<AStageCell>(StageCellClass, CellPoint, Rotation);
 			}
 
-			Cell->Initialize(colIndex, rowIndex);
+			Cell->Initialize(this, colIndex, rowIndex);
 
 			CellPoint.X += CellLength;
 

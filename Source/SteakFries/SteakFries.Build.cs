@@ -16,7 +16,7 @@ public class SteakFries : ModuleRules
 			"InputCore", 
 			"GameplayAbilities", 
 			"Paper2D", 
-			"AIModule" 
+			"AIModule",
 		});
 
 		PublicIncludePaths.AddRange(new string[]

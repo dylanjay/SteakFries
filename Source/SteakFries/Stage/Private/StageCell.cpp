@@ -3,8 +3,10 @@
 
 #include "StageCell.h"
 
-void AStageCell::Initialize(int32 Col, int32 Row)
+void AStageCell::Initialize(AStageGrid* OwningGrid, int32 Col, int32 Row)
 {
+	check(IsValid(OwningGrid));
+	StageGrid = OwningGrid;
 	GridPoint = new UE::Math::TIntPoint<int32>(Col, Row);
 }
 
