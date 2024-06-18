@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "BattleCharacter.h"
 #include "Enemy.generated.h"
 
 #define TPoint UE::Math::TIntPoint<int32>
@@ -20,26 +20,22 @@ enum class EEnemyState : uint8
 	ExecutingTurn UMETA(DisplayName = "Executing Turn"),
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyStateEnter, EEnemyState, NewState);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyStateExit, EEnemyState, OldState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyStateEnter, AEnemy*, Enemy, EEnemyState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyStateExit, AEnemy*, Enemy, EEnemyState, OldState);
 
 
 UCLASS()
-class STEAKFRIES_API AEnemy : public APawn
+class STEAKFRIES_API AEnemy : public ABattleCharacter
 {
 	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(BlueprintAssignable)
-	FOnEnemyStateEnter OnEnemyStateEnterDelegate;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnEnemyStateExit OnEnemyStateExitDelegate;
 
 protected:
 
 	EEnemyState State = EEnemyState::Invalid;
+
+	FOnEnemyStateEnter OnStateEnterDelegate;
+
+	FOnEnemyStateExit OnStateExitDelegate;
 
 	TPoint TargetPoint;
 
@@ -47,9 +43,13 @@ public:
 
 	EEnemyState GetState() const { return State; }
 
+	FOnEnemyStateEnter GetOnStateEnterDelegate() const { return OnStateEnterDelegate; }
+
+	FOnEnemyStateExit GetOnStateExitDelegate() const { return OnStateExitDelegate; }
+
 	bool TrySetState(EEnemyState NewState);
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	virtual void SetIntention();
 
@@ -57,6 +57,6 @@ public:
 
 	virtual void MoveInRange();
 
-	virtual void TryFindTarget();
+	virtual bool TryFindTarget();
 
 };

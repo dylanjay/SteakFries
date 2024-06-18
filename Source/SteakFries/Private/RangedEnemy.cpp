@@ -2,6 +2,11 @@
 
 
 #include "RangedEnemy.h"
+#include "GridMovementComponent.h"
+#include "PathMoveAction.h"
+#include "StageGrid.h"
+#include "ActionScriptGeneratorComponent.h"
+#include "ActionScriptPlayerComponent.h"
 
 void ARangedEnemy::Initialize()
 {
@@ -9,6 +14,9 @@ void ARangedEnemy::Initialize()
 
 void ARangedEnemy::SetIntention()
 {
+
+
+    TrySetState(EEnemyState::IntentionSet);
 }
 
 void ARangedEnemy::ExecuteTurn()
@@ -17,27 +25,36 @@ void ARangedEnemy::ExecuteTurn()
 
 void ARangedEnemy::MoveInRange()
 {
-  /*if (!TryFindTarget(TargetLocation))
+  if (!TryFindTarget())
   {
     return;
   }
 
   UE::Math::TIntPoint<int32> CurrentLocation = GridMovementComp->GetCurrentCell()->GetPoint();
 
-  if (CurrentLocation.X != TargetLocation.X)
+  if (CurrentLocation.X != TargetPoint.X)
   {
-    TPoint VantagePoint = TPoint(TargetLocation.X, CurrentLocation.Y);
+    TPoint VantagePoint = TPoint(TargetPoint.X, CurrentLocation.Y);
     AStageCell* TargetCell = StageGrid->GetCell(VantagePoint);
 
     APathMoveAction* PathMove = GetWorld()->SpawnActor<APathMoveAction>(APathMoveAction::StaticClass());
 
     PathMove->SetDestination(TargetCell);
 
-    if (!ActionScriptGenerator->TryAddAction(PathMove))
+    if (!ActionScriptGeneratorComp->TryAddAction(PathMove))
     {
       return;
     }
   }
 
-  ActionScriptPlayer->PlayScript(ActionScriptGenerator->GetScript());*/
+  ActionScriptPlayerComp->OnScriptComplete.AddUniqueDynamic(this, &ARangedEnemy::OnMoveInRangeComplete);
+
+  ActionScriptPlayerComp->PlayScript(ActionScriptGeneratorComp->GetScript());
+}
+
+void ARangedEnemy::OnMoveInRangeComplete()
+{
+    ActionScriptPlayerComp->OnScriptComplete.RemoveDynamic(this, &ARangedEnemy::OnMoveInRangeComplete);
+
+    SetIntention();
 }

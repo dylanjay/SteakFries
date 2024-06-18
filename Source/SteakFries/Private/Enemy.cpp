@@ -2,6 +2,9 @@
 
 #include "Enemy.h"
 #include "StageGrid.h"
+#include "BattleGameState.h"
+#include "PlayerBattleCharacter.h"
+#include "GridMovementComponent.h"
 
 bool AEnemy::TrySetState(EEnemyState NewState)
 {
@@ -10,7 +13,7 @@ bool AEnemy::TrySetState(EEnemyState NewState)
     return false;
   }
 
-  OnEnemyStateExitDelegate.Broadcast(State);
+  OnStateExitDelegate.Broadcast(this, State);
 
   State = NewState;
 
@@ -26,13 +29,15 @@ bool AEnemy::TrySetState(EEnemyState NewState)
 
   check(State == NewState);
 
-  OnEnemyStateEnterDelegate.Broadcast(State);
+  OnStateEnterDelegate.Broadcast(this, State);
   
   return true;
 }
 
 void AEnemy::Initialize()
 {
+    Super::Initialize();
+
   // TODO: Prepare
   TrySetState(EEnemyState::Default);
 }
@@ -53,7 +58,15 @@ void AEnemy::MoveInRange()
   SetIntention();
 }
 
-void AEnemy::TryFindTarget()
+bool AEnemy::TryFindTarget()
 {
+    ABattleGameState* BattleGameState = GetWorld()->GetAuthGameMode()->GetGameState<ABattleGameState>();
 
+    APlayerBattleCharacter* PlayerCharacter = BattleGameState->GetPlayerCharacters()[0];
+
+    UGridMovementComponent* PlayerMovementComp = PlayerCharacter->GetComponentByClass<UGridMovementComponent>();
+
+    TargetPoint = PlayerMovementComp->GetCurrentCell()->GetPoint();
+
+    return true;
 }

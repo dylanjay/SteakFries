@@ -3,6 +3,7 @@
 
 #include "StageGrid.h"
 #include "GridMovementComponent.h"
+#include "BattleCharacter.h"
 #include <stack>
 #include <set>
 #include "Logging/StructuredLog.h"
@@ -248,14 +249,14 @@ AStageCell* AStageGrid::GetCell(const TPoint& Point) const
 	return nullptr;
 }
 
-bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TPoint& StartingPoint)
+bool AStageGrid::InitializeOnGrid(ABattleCharacter* Character, const TPoint& StartingPoint)
 {
-	if (!IsValid(Pawn))
+	if (!IsValid(Character))
 	{
 		return false;
 	}
 
-	UGridMovementComponent* GridMovementComp = Pawn->GetComponentByClass<UGridMovementComponent>();
+	UGridMovementComponent* GridMovementComp = Character->GetComponentByClass<UGridMovementComponent>();
 	check(IsValid(GridMovementComp));
 
 	AStageCell* StageCell = GetCell(StartingPoint);
@@ -266,9 +267,9 @@ bool AStageGrid::InitializeOnGrid(APawn* Pawn, const TPoint& StartingPoint)
 		return false;
 	}
 
-	CharacterCells.Add(Pawn, StageCell);
+	CharacterCells.Add(Character, StageCell);
 
-	StageCell->Fill(Pawn);
+	StageCell->Fill(Character);
 	
 	GridMovementComp->Initialize(this, StageCell);
 

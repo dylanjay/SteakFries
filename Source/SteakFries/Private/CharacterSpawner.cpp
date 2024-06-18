@@ -2,12 +2,15 @@
 
 
 #include "CharacterSpawner.h"
+#include "BattleCharacter.h"
 
-APawn* ACharacterSpawner::SpawnCharacterPawn(const TSubclassOf<APawn>& PawnClass, const FVector& Location, const FRotator& Rotation)
+
+template <typename T>
+T* ACharacterSpawner::Spawn(const TSubclassOf<ABattleCharacter>& Class, const FVector& Location, const FRotator& Rotation)
 {
-	APawn* Pawn = GetWorld()->SpawnActor<APawn>(PawnClass, Location, Rotation);
+	T* Character = GetWorld()->SpawnActor<T>(Class, Location, Rotation);
 	
-	return Pawn;
+	return Character;
 }
 
 void ACharacterSpawner::BeginPlay()

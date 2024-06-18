@@ -9,6 +9,8 @@
 #include "CardinalPathFinding.h"
 #include "StageGrid.generated.h"
 
+class ABattleCharacter;
+
 #define TPoint UE::Math::TIntPoint<int32>
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBeginCursorOverCell, AStageCell*, Cell);
@@ -42,7 +44,7 @@ protected:
 	
 public:	
 
-	bool InitializeOnGrid(APawn* Pawn, const TPoint& StartingPoint);
+	bool InitializeOnGrid(ABattleCharacter* Character, const TPoint& StartingPoint);
 
 public:
 
