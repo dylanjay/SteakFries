@@ -6,11 +6,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "BattleGameMode.generated.h"
 
-// Forward Declarations
 class ATurnManager;
 class ACharacterSpawner;
 class AStageGrid;
 class AEnemyController;
+class AEnemy;
+class APlayerBattleCharacter;
+
 
 UCLASS()
 class STEAKFRIES_API ABattleGameMode : public AGameModeBase
@@ -29,13 +31,13 @@ protected:
 	TSubclassOf<AStageGrid> StageGridClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<APawn> PlayerPawnClass;
+	TSubclassOf<APlayerBattleCharacter> PlayerClass;
 
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Player Starting Point"))
 	TArray<int32> PlayerStartingPointArray = { 3, 0 };
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<APawn> EnemyPawnClass;
+	TSubclassOf<AEnemy> EnemyClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AEnemyController> EnemyControllerClass;
@@ -54,9 +56,6 @@ protected:
 	UPROPERTY()
 	AStageGrid* StageGrid;
 
-	UPROPERTY()
-	APawn* PlayerPawn;
-
 	UE::Math::TIntPoint<int32>* PlayerStartingPoint;
 
 	UE::Math::TIntPoint<int32>* EnemyStartingPoint;
@@ -64,16 +63,13 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable)
-	ACharacterSpawner* GetCharacterSpawner() const;
+	ACharacterSpawner* GetCharacterSpawner() const { return CharacterSpawner; }
 
 	UFUNCTION(BlueprintCallable)
-	AStageGrid* GetStageGrid() const;
+	AStageGrid* GetStageGrid() const { return StageGrid; }
 
 	UFUNCTION(BlueprintCallable)
-	ATurnManager* GetTurnManager() const;
-
-	UFUNCTION(BlueprintCallable)
-	APawn* GetPlayerPawn() const;
+	ATurnManager* GetTurnManager() const { return TurnManager; }
 
 public:
 

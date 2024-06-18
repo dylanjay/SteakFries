@@ -5,24 +5,17 @@
 #include "PaperFlipbookComponent.h"
 #include "EnemyController.h"
 #include "Enemy.h"
+#include "BattleCharacter.h"
+#include "BattleGameState.h"
 
 
-void ATurnManager::Initialize(TArray<APawn*> Pawns)
+void ATurnManager::Initialize(TArray<ABattleCharacter*> AllCharacters)
 {
-	for (APawn* Pawn : Pawns)
+	for (ABattleCharacter* Character : AllCharacters)
 	{
-		check(IsValid(Pawn));
+		check(IsValid(Character));
 
-		TurnQueue.Enqueue(Pawn);
-
-		AEnemyController* EnemyController = nullptr;
-
-		if (TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController))
-		{
-			EnemyControllers.Add(EnemyController);
-
-			// On Enemy Intention Set
-		}
+		TurnQueue.Enqueue(Character);
 	}
 }
 
@@ -33,12 +26,21 @@ void ATurnManager::Start()
 
 void ATurnManager::SetEnemyIntentions()
 {
-	for (AEnemyController* EnemyController : EnemyControllers)
+	ABattleGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<ABattleGameState>();
+
+	TArray<AEnemy*> Enemies = GameState->GetEnemies();
+
+	for (AEnemy* Enemy : Enemies)
 	{
-		if (EnemyController->GetEnemy()->GetState() >= EEnemyState::SettingIntention)
+		if (Enemy->GetState() >= EEnemyState::SettingIntention)
 		{
 			continue;
 		}
+
+		UPaperFlipbookComponent* PaperFlipbookComponent = Enemy->GetComponentByClass<UPaperFlipbookComponent>();
+		PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
+
+		AEnemyController* EnemyController = Cast<AEnemyController>(Enemy->GetController());
 
 		EnemyController->SetIntention();
 
@@ -50,36 +52,28 @@ void ATurnManager::SetEnemyIntentions()
 
 void ATurnManager::NextTurn()
 {
-	TurnQueue.Dequeue(CurrentTurnPawn);
+	TurnQueue.Dequeue(CurrentTurnCharacter);
 
-	check(IsValid(CurrentTurnPawn));
+	check(IsValid(CurrentTurnCharacter));
 
 	AEnemyController* EnemyController = nullptr;
-	if (TryGetEnemyController(CurrentTurnPawn->GetController(), EnemyController))
+	if (TryGetEnemyController(CurrentTurnCharacter->GetController(), EnemyController))
 	{
 		EnemyController->ExecuteTurn();
 	}
 
-	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
-
-	if (PaperFlipbookComponent)
-	{
-		PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
-	}
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnCharacter->GetComponentByClass<UPaperFlipbookComponent>();
+	PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
 }
 
 void ATurnManager::EndTurn()
 {
-	check(IsValid(CurrentTurnPawn));
+	check(IsValid(CurrentTurnCharacter));
 
-	TurnQueue.Enqueue(CurrentTurnPawn);
+	TurnQueue.Enqueue(CurrentTurnCharacter);
 
-	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnPawn->GetComponentByClass<UPaperFlipbookComponent>();
-
-	if (PaperFlipbookComponent)
-	{
-		PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
-	}
+	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnCharacter->GetComponentByClass<UPaperFlipbookComponent>();
+	PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
 
 	NextTurn();
 }
@@ -104,6 +98,21 @@ bool ATurnManager::TrySetState(ETurnManagerState NewState)
 	}
 
 	return true;
+}
+
+void ATurnManager::OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState)
+{
+	switch (NewState)
+	{
+	case EEnemyState::IntentionSet:
+
+		UPaperFlipbookComponent* PaperFlipbookComponent = Enemy->GetComponentByClass<UPaperFlipbookComponent>();
+		PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
+
+		SetEnemyIntentions();
+
+		break;
+	}
 }
 
 bool ATurnManager::TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController)

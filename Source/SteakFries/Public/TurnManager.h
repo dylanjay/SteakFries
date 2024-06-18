@@ -24,7 +24,7 @@ class STEAKFRIES_API ATurnManager : public AActor
 	
 public:	
 
-	void Initialize(TArray<APawn*> Pawns);
+	void Initialize(TArray<ABattleCharacter*> AllCharacters);
 
 	void Start();
 
@@ -44,13 +44,14 @@ protected:
 
 	bool TrySetState(ETurnManagerState NewState);
 
+	UFUNCTION()
+	void OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState);
+
 protected:
 
 	ETurnManagerState State = ETurnManagerState::Invalid;
 
-	TQueue<APawn*> TurnQueue;
+	TQueue<ABattleCharacter*> TurnQueue;
 
-	TArray<AEnemyController*> EnemyControllers;
-
-	APawn* CurrentTurnPawn = nullptr;
+	ABattleCharacter* CurrentTurnCharacter = nullptr;
 };
