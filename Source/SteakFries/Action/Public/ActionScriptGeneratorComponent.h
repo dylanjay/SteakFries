@@ -30,7 +30,7 @@ public:
 
 public:
 
-	void Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid);
+	void Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement);
 
 public:
 

@@ -18,7 +18,7 @@ class STEAKFRIES_API UActionScriptPlayerComponent : public UActorComponent
 
 public:
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable)
 	FOnScriptComplete OnScriptComplete;
 
 public:
@@ -26,6 +26,4 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayScript(const TArray<AAction*> &Script);
 
-protected:
-	virtual void BeginPlay() override;
 };

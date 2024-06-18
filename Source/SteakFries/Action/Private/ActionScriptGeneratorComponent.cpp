@@ -7,6 +7,7 @@
 #include "StageCell.h"
 #include "MoveAction.h"
 #include "StageGrid.h"
+#include "BattleGameMode.h"
 
 
 void UActionScriptGeneratorComponent::BeginPlay()
@@ -14,16 +15,17 @@ void UActionScriptGeneratorComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UActionScriptGeneratorComponent::Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement, AStageGrid* InStageGrid)
+void UActionScriptGeneratorComponent::Initialize(UActionScriptPlayerComponent* InScriptPlayer, UActionPointResourceComponent* InActionPoints, UGridMovementComponent* InGridMovement)
 {
 	ScriptPlayer = InScriptPlayer;
 	ScriptPlayer->OnScriptComplete.AddUniqueDynamic(this, &UActionScriptGeneratorComponent::OnPlayScriptComplete);
 
 	ActionPoints = InActionPoints;
 	GridMovement = InGridMovement;
-	StageGrid = InStageGrid;
 	CurrentCell = GridMovement->GetCurrentCell();
 	check(IsValid(CurrentCell));
+
+	StageGrid = Cast<ABattleGameMode>(GetWorld()->GetAuthGameMode())->GetStageGrid();
 }
 
 void UActionScriptGeneratorComponent::Reset()
