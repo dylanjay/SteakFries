@@ -6,11 +6,17 @@
 #include "ActionPointResourceComponent.h"
 #include "ActionScriptPlayerComponent.h"
 #include "ActionScriptGeneratorComponent.h"
-#include "BattleGameMode.h"
+#include "BattleGameState.h"
+#include "StageGridManagerComponent.h"
 
-void ABattleCharacter::Initialize()
+void ABattleCharacter::Initialize(ETeam InTeam)
 {
-	StageGrid = Cast<ABattleGameMode>(GetWorld()->GetAuthGameMode())->GetStageGrid();
+	Team = InTeam;
+
+	StageGrid = StageGrid = GetWorld()->
+		GetGameState<ABattleGameState>()->
+		GetComponentByClass<UStageGridManagerComponent>()->
+		GetStageGrid();
 
 	GridMovementComp = GetComponentByClass<UGridMovementComponent>();
 

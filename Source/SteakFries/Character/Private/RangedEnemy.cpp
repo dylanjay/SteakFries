@@ -8,9 +8,6 @@
 #include "ActionScriptGeneratorComponent.h"
 #include "ActionScriptPlayerComponent.h"
 
-void ARangedEnemy::Initialize()
-{
-}
 
 void ARangedEnemy::SetIntention()
 {

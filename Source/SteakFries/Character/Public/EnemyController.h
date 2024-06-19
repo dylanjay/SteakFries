@@ -8,7 +8,7 @@
 
 class APawn;
 class AEnemy;
-class ATurnManager;
+class UTurnManagerComponent;
 class UActionScriptGeneratorComponent;
 class UActionScriptPlayerComponent;
 class AStageGrid;

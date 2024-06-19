@@ -1,17 +1,30 @@
 // All rights reserved
 
 
-#include "TurnManager.h"
+#include "TurnManagerComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "EnemyController.h"
 #include "Enemy.h"
 #include "BattleCharacter.h"
 #include "BattleGameState.h"
+#include "CharacterManagerComponent.h"
 
 
-void ATurnManager::Initialize(TArray<ABattleCharacter*> AllCharacters)
+void UTurnManagerComponent::BeginPlay()
 {
-	for (ABattleCharacter* Character : AllCharacters)
+	Super::BeginPlay();
+
+	Start();
+}
+
+void UTurnManagerComponent::Initialize()
+{
+	ABattleGameState* BattleGameState = GetWorld()->GetGameState<ABattleGameState>();
+
+	CharacterManager = BattleGameState->GetComponentByClass<UCharacterManagerComponent>();
+	check(IsValid(CharacterManager));
+
+	for (ABattleCharacter* Character : CharacterManager->GetAllCharacters())
 	{
 		check(IsValid(Character));
 
@@ -19,16 +32,14 @@ void ATurnManager::Initialize(TArray<ABattleCharacter*> AllCharacters)
 	}
 }
 
-void ATurnManager::Start()
+void UTurnManagerComponent::Start()
 {
 	TrySetState(ETurnManagerState::SetEnemyIntentions);
 }
 
-void ATurnManager::SetEnemyIntentions()
+void UTurnManagerComponent::SetEnemyIntentions()
 {
-	ABattleGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<ABattleGameState>();
-
-	TArray<AEnemy*> Enemies = GameState->GetEnemies();
+	TArray<AEnemy*> Enemies = CharacterManager->GetEnemies();
 
 	for (AEnemy* Enemy : Enemies)
 	{
@@ -50,7 +61,7 @@ void ATurnManager::SetEnemyIntentions()
 	TrySetState(ETurnManagerState::TurnCycle);
 }
 
-void ATurnManager::NextTurn()
+void UTurnManagerComponent::NextTurn()
 {
 	TurnQueue.Dequeue(CurrentTurnCharacter);
 
@@ -66,7 +77,7 @@ void ATurnManager::NextTurn()
 	PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
 }
 
-void ATurnManager::EndTurn()
+void UTurnManagerComponent::EndTurn()
 {
 	check(IsValid(CurrentTurnCharacter));
 
@@ -78,7 +89,7 @@ void ATurnManager::EndTurn()
 	NextTurn();
 }
 
-bool ATurnManager::TrySetState(ETurnManagerState NewState)
+bool UTurnManagerComponent::TrySetState(ETurnManagerState NewState)
 {
 	if (State == NewState)
 	{
@@ -100,7 +111,7 @@ bool ATurnManager::TrySetState(ETurnManagerState NewState)
 	return true;
 }
 
-void ATurnManager::OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState)
+void UTurnManagerComponent::OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState)
 {
 	switch (NewState)
 	{
@@ -115,7 +126,7 @@ void ATurnManager::OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState)
 	}
 }
 
-bool ATurnManager::TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController)
+bool UTurnManagerComponent::TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController)
 {
 	OutEnemyController = nullptr;
 

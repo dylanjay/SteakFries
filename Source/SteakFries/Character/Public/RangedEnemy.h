@@ -12,12 +12,12 @@ class STEAKFRIES_API ARangedEnemy : public AEnemy
 {
 	GENERATED_BODY()
 
-	virtual void Initialize() override;
-
 	virtual void SetIntention() override;
 
 	virtual void ExecuteTurn() override;
 
 	virtual void MoveInRange() override;
+
+	void OnMoveInRangeComplete();
 
 };

@@ -7,7 +7,8 @@
 #include "StageCell.h"
 #include "MoveAction.h"
 #include "StageGrid.h"
-#include "BattleGameMode.h"
+#include "BattleGameState.h"
+#include "StageGridManagerComponent.h"
 
 
 void UActionScriptGeneratorComponent::BeginPlay()
@@ -25,7 +26,10 @@ void UActionScriptGeneratorComponent::Initialize(UActionScriptPlayerComponent* I
 	CurrentCell = GridMovement->GetCurrentCell();
 	check(IsValid(CurrentCell));
 
-	StageGrid = Cast<ABattleGameMode>(GetWorld()->GetAuthGameMode())->GetStageGrid();
+	StageGrid = GetWorld()->
+		GetGameState<ABattleGameState>()->
+		GetComponentByClass<UStageGridManagerComponent>()->
+		GetStageGrid();
 }
 
 void UActionScriptGeneratorComponent::Reset()

@@ -42,8 +42,3 @@ void UPlayerMovementVisualizerComponent::DeactivateVisual()
 		return;
 	}
 }
-
-void UPlayerMovementVisualizerComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}

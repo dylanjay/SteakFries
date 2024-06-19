@@ -6,12 +6,14 @@
 #include "GameFramework/GameModeBase.h"
 #include "BattleGameMode.generated.h"
 
-class ATurnManager;
-class ACharacterSpawner;
+class UTurnManagerComponent;
+class UCharacterSpawnManagerComponent;
 class AStageGrid;
 class AEnemyController;
 class AEnemy;
 class APlayerBattleCharacter;
+
+#define TPoint UE::Math::TIntPoint<int32>
 
 
 UCLASS()
@@ -22,13 +24,10 @@ class STEAKFRIES_API ABattleGameMode : public AGameModeBase
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ATurnManager> TurnManagerClass;
+	TSubclassOf<UTurnManagerComponent> TurnManagerClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ACharacterSpawner> CharacterSpawnerClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AStageGrid> StageGridClass;
+	TSubclassOf<UCharacterSpawnManagerComponent> CharacterSpawnManagerClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APlayerBattleCharacter> PlayerClass;
@@ -39,41 +38,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AEnemy> EnemyClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AEnemyController> EnemyControllerClass;
-
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Enemy Starting Point"))
 	TArray<int32> EnemyStartingPointArray = { 3, 5 };
 
 protected:
 
 	UPROPERTY()
-	ATurnManager* TurnManager;
+	UTurnManagerComponent* TurnManager = nullptr;
 
 	UPROPERTY()
-	ACharacterSpawner* CharacterSpawner;
-
-	UPROPERTY()
-	AStageGrid* StageGrid;
-
-	UE::Math::TIntPoint<int32>* PlayerStartingPoint;
-
-	UE::Math::TIntPoint<int32>* EnemyStartingPoint;
+	UCharacterSpawnManagerComponent* CharacterSpawnManager = nullptr;
 
 public:
 
 	UFUNCTION(BlueprintCallable)
-	ACharacterSpawner* GetCharacterSpawner() const { return CharacterSpawner; }
+	UCharacterSpawnManagerComponent* GetCharacterSpawnManager() const { return CharacterSpawnManager; }
 
 	UFUNCTION(BlueprintCallable)
-	AStageGrid* GetStageGrid() const { return StageGrid; }
-
-	UFUNCTION(BlueprintCallable)
-	ATurnManager* GetTurnManager() const { return TurnManager; }
-
-public:
-
-	virtual ~ABattleGameMode();
+	UTurnManagerComponent* GetTurnManager() const { return TurnManager; }
 
 protected:
 

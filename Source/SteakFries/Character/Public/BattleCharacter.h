@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
+#include "CharacterTypes.h"
 #include "BattleCharacter.generated.h"
 
 class UGridMovementComponent;
@@ -18,6 +19,9 @@ class STEAKFRIES_API ABattleCharacter : public APaperCharacter
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY()
+	ETeam Team;
 
 	UPROPERTY()
 	AStageGrid* StageGrid = nullptr;
@@ -35,5 +39,9 @@ protected:
 	UActionScriptGeneratorComponent* ActionScriptGeneratorComp = nullptr;
 
 public:
-	virtual void Initialize();
+
+	UFUNCTION(BlueprintCallable)
+	ETeam GetTeam() const { return Team; }
+
+	virtual void Initialize(ETeam InTeam);
 };

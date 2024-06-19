@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "TurnManager.generated.h"
+#include "Components/ActorComponent.h"
+#include "TurnManagerComponent.generated.h"
 
 class AEnemyController;
+class ABattleCharacter;
+class UCharacterManagerComponent;
 
 UENUM(BlueprintType)
 enum class ETurnManagerState : uint8
@@ -18,13 +20,25 @@ enum class ETurnManagerState : uint8
 
 
 UCLASS(Blueprintable, BlueprintType)
-class STEAKFRIES_API ATurnManager : public AActor
+class STEAKFRIES_API UTurnManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+protected:
+
+	ETurnManagerState State = ETurnManagerState::Invalid;
+
+	TQueue<ABattleCharacter*> TurnQueue;
+
+	ABattleCharacter* CurrentTurnCharacter = nullptr;
+
+	UCharacterManagerComponent* CharacterManager = nullptr;
 	
 public:	
 
-	void Initialize(TArray<ABattleCharacter*> AllCharacters);
+	virtual void BeginPlay() override;
+
+	void Initialize();
 
 	void Start();
 
@@ -47,11 +61,4 @@ protected:
 	UFUNCTION()
 	void OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState);
 
-protected:
-
-	ETurnManagerState State = ETurnManagerState::Invalid;
-
-	TQueue<ABattleCharacter*> TurnQueue;
-
-	ABattleCharacter* CurrentTurnCharacter = nullptr;
 };

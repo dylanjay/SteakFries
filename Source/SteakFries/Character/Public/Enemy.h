@@ -9,6 +9,8 @@
 #define TPoint UE::Math::TIntPoint<int32>
 
 class AStageGrid;
+class UCharacterManagerComponent;
+
 
 UENUM(BlueprintType)
 enum class EEnemyState : uint8
@@ -37,6 +39,8 @@ protected:
 
 	FOnEnemyStateExit OnStateExitDelegate;
 
+	UCharacterManagerComponent* CharacterManager = nullptr;
+
 	TPoint TargetPoint;
 
 public:
@@ -49,7 +53,7 @@ public:
 
 	bool TrySetState(EEnemyState NewState);
 
-	virtual void Initialize() override;
+	virtual void Initialize(ETeam InTeam) override;
 
 	virtual void SetIntention();
 

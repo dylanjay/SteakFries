@@ -36,6 +36,4 @@ protected:
 
 	void DeactivateVisual();
 
-	virtual void BeginPlay() override;
-		
 };

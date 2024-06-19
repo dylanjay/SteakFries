@@ -22,6 +22,8 @@ public class SteakFries : ModuleRules
 		PublicIncludePaths.AddRange(new string[]
 		{
 			"SteakFries",
+			"SteakFries/Character/Public",
+			"SteakFries/BlueprintFunctionLibraries/Public",
 			"SteakFries/Framework/Public",
             "SteakFries/Action/Public",
             "SteakFries/Health/Public",
