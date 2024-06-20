@@ -1,30 +1,9 @@
 #include "CardinalPathFinding.h"
 
 template<IsPathFindable T>
-CardinalPathFinding<T>::CardinalPathFinding()
+TArray<TPoint> CardinalPathFinding<T>::GetSearchPoints()
 {
-	CardinalDirections =
-	{
-		new UE::Math::TIntPoint<int32>(0, 1),
-		new UE::Math::TIntPoint<int32>(1, 0),
-		new UE::Math::TIntPoint<int32>(0, -1),
-		new UE::Math::TIntPoint<int32>(-1, 0)
-	};
-}
-
-template<IsPathFindable T>
-CardinalPathFinding<T>::~CardinalPathFinding()
-{
-	for (int i = 0; i < CardinalDirections.Num(); i++)
-	{
-		delete(CardinalDirections[i]);
-	}
-}
-
-template<IsPathFindable T>
-TArray<const TPoint*> CardinalPathFinding<T>::GetSearchPoints()
-{
-	return CardinalDirections;
+	return CardinalDirections::Get();
 }
 
 template<IsPathFindable T>

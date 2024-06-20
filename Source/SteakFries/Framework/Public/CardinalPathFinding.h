@@ -9,17 +9,10 @@
 template<IsPathFindable T>
 class STEAKFRIES_API CardinalPathFinding : public PathFinding2D<T>
 {
-protected:
-
-  TArray<const TPoint*> CardinalDirections;
 
 public:
 
-  CardinalPathFinding();
-
-  virtual ~CardinalPathFinding();
-
-  virtual TArray<const TPoint*> GetSearchPoints() override;
+  virtual TArray<TPoint> GetSearchPoints() override;
 
 protected:
 

@@ -57,9 +57,9 @@ bool PathFinding2D<T>::TryFindPath(const TArray<TArray<T*>>& Grid, T* Start, T* 
 
 		DataMatrix[Cur.Node->GetX()][Cur.Node->GetY()].Visited = true;
 
-		for (const TPoint* SearchPoint : GetSearchPoints())
+		for (const TPoint& SearchPoint : GetSearchPoints())
 		{
-			TPoint NeighborPoint = Cur.Node->GetPoint() + *SearchPoint;
+			TPoint NeighborPoint = Cur.Node->GetPoint() + SearchPoint;
 
 			if (IsValidPoint(NeighborPoint, Width, Height))
 			{

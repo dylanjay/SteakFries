@@ -43,7 +43,7 @@ public:
 
 	bool TryFindPath(const TArray<TArray<T*>>& Grid, T* Start, T* Destination, TArray<T*>& OutPath);
 
-	virtual TArray<const TPoint*> GetSearchPoints() = 0;
+	virtual TArray<TPoint> GetSearchPoints() = 0;
 
 protected:
 

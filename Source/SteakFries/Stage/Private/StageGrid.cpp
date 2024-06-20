@@ -215,12 +215,6 @@ bool AStageGrid::IsBlocked(const TPoint& Point) const
 	return GetCell(Point)->IsBlocked();
 }
 
-TArray<const TPoint*> AStageGrid::GetCardinalDirections() const
-{
-	check(PathFinding != nullptr);
-	return PathFinding->GetSearchPoints();
-}
-
 AStageCell* AStageGrid::GetCell(const TArray<int32>& PointArray) const
 {
 	check(PointArray.Num() >= 2);

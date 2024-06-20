@@ -93,8 +93,6 @@ public:
 
 	bool IsBlocked(const TPoint& Point) const;
 
-	TArray<const TPoint*> GetCardinalDirections() const;
-
 protected:
 
 	void CreateGrid();
