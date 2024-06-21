@@ -72,6 +72,7 @@ void UTurnManagerComponent::NextTurn()
 	case ETeam::Player:
 	{
 		PlayerController->Possess(CurrentTurnCharacter);
+		CurrentTurnCharacter->EnableInput(PlayerController);
 	}
 	break;
 
@@ -111,6 +112,7 @@ void UTurnManagerComponent::EndTurn()
 	{
 	case ETeam::Player:
 	{
+		CurrentTurnCharacter->DisableInput(PlayerController);
 		PlayerController->UnPossess();
 	}
 		break;
