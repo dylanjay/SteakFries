@@ -9,7 +9,7 @@
 class AStageGrid;
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class STEAKFRIES_API UStageGridManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()

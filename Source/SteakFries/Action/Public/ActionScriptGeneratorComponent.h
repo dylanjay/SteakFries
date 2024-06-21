@@ -24,8 +24,10 @@ class STEAKFRIES_API UActionScriptGeneratorComponent : public UActorComponent
 
 public:
 
+	UPROPERTY(BlueprintAssignable)
 	FOnActionAdded OnActionAdded;
 
+	UPROPERTY(BlueprintAssignable)
 	FOnReset OnReset;
 
 public:

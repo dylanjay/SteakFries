@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+#include "StageGridManagerComponent.h"
 #include "BattleGameState.generated.h"
 
 class UCharacterManagerComponent;
@@ -20,14 +21,17 @@ protected:
 	UPROPERTY()
 	UCharacterManagerComponent* CharacterManager = nullptr;
 
+	UPROPERTY()
 	UStageGridManagerComponent* StageGridManager = nullptr;
 	
 public:
 
 	void Initialize();
 
+	UFUNCTION(BlueprintCallable)
 	UCharacterManagerComponent* GetCharacterManager() const { return CharacterManager; }
 
-	UStageGridManagerComponent* GetStageGridManager() const { return StageGridManager; }
+	UFUNCTION(BlueprintCallable)
+	AStageGrid* GetStageGrid() const { return StageGridManager->GetStageGrid(); }
 
 };

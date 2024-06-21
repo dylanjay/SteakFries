@@ -1,6 +1,7 @@
 // All rights reserved
 
 #include "StageGridManagerComponent.h"
+#include "StageGrid.h"
 
 void UStageGridManagerComponent::SpawnStageGrid()
 {
@@ -9,6 +10,6 @@ void UStageGridManagerComponent::SpawnStageGrid()
 		return;
 	}
 
-	GetWorld()->SpawnActor<AStageGrid>(StageGridClass);
+	StageGrid = GetWorld()->SpawnActor<AStageGrid>(StageGridClass);
 	check(IsValid(StageGrid));
 }

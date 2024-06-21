@@ -5,6 +5,8 @@
 #include "Action.h"
 #include "MoveAction.generated.h"
 
+class AStageCell;
+
 
 UCLASS()
 class STEAKFRIES_API AMoveAction : public AAction
@@ -19,4 +21,5 @@ protected:
 public:
 
 	AStageCell* GetDestination() const { return Destination; }
+
 };

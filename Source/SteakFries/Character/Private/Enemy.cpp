@@ -22,11 +22,22 @@ bool AEnemy::TrySetState(EEnemyState NewState)
 	switch (State)
 	{
 	case EEnemyState::SettingIntention:
-		MoveInRange();
-		break;
+	{
+		FTimerHandle SetIntentionDelayHandle;
+		GetWorld()->GetTimerManager().SetTimer(
+			SetIntentionDelayHandle,
+			this,
+			&AEnemy::MoveInRange,
+			1.0f,
+			false);
+	}
+	break;
+
 	case EEnemyState::ExecutingTurn:
+	{
 		ExecuteTurn();
-		break;
+	}
+	break;
 	}
 
 	check(State == NewState);
@@ -46,10 +57,10 @@ void AEnemy::Initialize(ETeam InTeam)
 	check(IsValid(CharacterManager));
 
 	// TODO move
-	AEnemyController* EnemyController = GetWorld()->SpawnActor<AEnemyController>(AEnemyController::StaticClass());
+	AEnemyController* EnemyController = GetWorld()->SpawnActor<AEnemyController>();
 	check(IsValid(EnemyController));
-
-	EnemyController->Possess(this);
+;
+	EnemyController->Initialize(this);
 
 	// TODO: Prepare
 	TrySetState(EEnemyState::Default);

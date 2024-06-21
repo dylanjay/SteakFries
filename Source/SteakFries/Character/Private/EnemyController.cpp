@@ -5,10 +5,12 @@
 #include "Enemy.h"
 
 
-void AEnemyController::Initialize()
+void AEnemyController::Initialize(AEnemy* InEnemy)
 {
-  Enemy = Cast<AEnemy>(GetPawn());
+  Enemy = InEnemy;
   check(IsValid(Enemy));
+
+  Possess(Enemy);
 }
 
 void AEnemyController::SetIntention()

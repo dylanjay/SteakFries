@@ -14,22 +14,23 @@ class AStageGrid;
 class ABattleCharacter;
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class STEAKFRIES_API UCharacterSpawnManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:
+public:
 
+	UPROPERTY(BlueprintAssignable)
 	FOnCharacterSpawned OnCharacterSpawnedDelegate;
+
+protected:
 
 	AStageGrid* StageGrid = nullptr;
 	
 public:
 
 	void Initialize();
-
-	FOnCharacterSpawned GetOnCharacterSpawnedDelegate() const { return OnCharacterSpawnedDelegate; }
 
 	template <typename T>
 	T* Spawn(

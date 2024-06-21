@@ -7,8 +7,9 @@
 
 
 bool APathMoveAction::CanPlay(AStageCell* CurrentCell)
-{
+{ 
   check(IsValid(Destination));
+  check(IsValid(StageGrid));
 
   if (!StageGrid->TryFindPathToCell(CurrentCell, Destination, Path))
   {

@@ -265,7 +265,7 @@ bool AStageGrid::InitializeOnGrid(ABattleCharacter* Character, const TPoint& Sta
 
 	StageCell->Fill(Character);
 	
-	GridMovementComp->Initialize(this, StageCell);
+	GridMovementComp->Initialize(StageCell);
 
 	return true;
 }

@@ -26,8 +26,9 @@ class STEAKFRIES_API UGridMovementComponent : public UActorComponent
 
 public:
 
-	void Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell);
+	void Initialize(AStageCell* InStageCell);
 
+	UFUNCTION(BlueprintCallable)
 	AStageCell* GetCurrentCell() const { return CurrentCell; }
 
 public:

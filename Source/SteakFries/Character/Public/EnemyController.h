@@ -6,15 +6,9 @@
 #include "AIController.h"
 #include "EnemyController.generated.h"
 
-class APawn;
 class AEnemy;
-class UTurnManagerComponent;
-class UActionScriptGeneratorComponent;
-class UActionScriptPlayerComponent;
-class AStageGrid;
-class UGridMovementComponent;
 
-UCLASS(Abstract, Blueprintable)
+UCLASS(Blueprintable)
 class STEAKFRIES_API AEnemyController : public AAIController
 {
 	GENERATED_BODY()
@@ -25,7 +19,7 @@ protected:
 
 public:
 
-	virtual void Initialize();
+	virtual void Initialize(AEnemy* InEnemy);
 
 	virtual void SetIntention();
 

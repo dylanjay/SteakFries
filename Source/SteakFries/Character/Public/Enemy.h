@@ -31,13 +31,17 @@ class STEAKFRIES_API AEnemy : public ABattleCharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnEnemyStateEnter OnStateEnterDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnEnemyStateExit OnStateExitDelegate;
+
 protected:
 
 	EEnemyState State = EEnemyState::Invalid;
-
-	FOnEnemyStateEnter OnStateEnterDelegate;
-
-	FOnEnemyStateExit OnStateExitDelegate;
 
 	UCharacterManagerComponent* CharacterManager = nullptr;
 
@@ -46,10 +50,6 @@ protected:
 public:
 
 	EEnemyState GetState() const { return State; }
-
-	FOnEnemyStateEnter GetOnStateEnterDelegate() const { return OnStateEnterDelegate; }
-
-	FOnEnemyStateExit GetOnStateExitDelegate() const { return OnStateExitDelegate; }
 
 	bool TrySetState(EEnemyState NewState);
 

@@ -2,12 +2,16 @@
 
 #include "Action.h"
 #include "StageCell.h"
+#include "BattleGameState.h"
 
 
-void AAction::Initialize_Implementation(AStageGrid* InStageGrid, AStageCell* InCellLocation)
+void AAction::Initialize(AStageCell* InCellLocation)
 {
-  StageGrid = InStageGrid;
   CellLocation = InCellLocation;
+  check(IsValid(CellLocation));
+
+  StageGrid = GetWorld()->GetGameState<ABattleGameState>()->GetStageGrid();
+  check(IsValid(StageGrid));
 }
 
 bool AAction::CanPlay(AStageCell* CurrentCell)

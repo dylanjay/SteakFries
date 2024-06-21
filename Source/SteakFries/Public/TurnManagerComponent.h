@@ -9,17 +9,19 @@
 class AEnemyController;
 class ABattleCharacter;
 class UCharacterManagerComponent;
+class APlayerControllerBase;
 
 UENUM(BlueprintType)
 enum class ETurnManagerState : uint8
 {
 	Invalid UMETA(DisplayName = "Invalid"),
+	FillingTurnQueue,
 	SetEnemyIntentions UMETA(DisplayName = "Set Enemy Intentions"),
 	TurnCycle UMETA(DisplayName = "Turn Cycle"),
 };
 
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class STEAKFRIES_API UTurnManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -33,6 +35,8 @@ protected:
 	ABattleCharacter* CurrentTurnCharacter = nullptr;
 
 	UCharacterManagerComponent* CharacterManager = nullptr;
+
+	APlayerControllerBase* PlayerController = nullptr;
 	
 public:	
 
@@ -42,21 +46,22 @@ public:
 
 	void Start();
 
-	void SetEnemyIntentions();
-
-	void NextTurn();
-
 public:
 
 	UFUNCTION(BlueprintAuthorityOnly, BlueprintCallable)
 	void EndTurn();
 
-	UFUNCTION(BlueprintCallable)
-	bool TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController);
-
 protected:
 
 	bool TrySetState(ETurnManagerState NewState);
+
+	bool TrySetStateNextTick(ETurnManagerState NewState);
+
+	void SetEnemyIntentions();
+
+	void NextTurn();
+
+	void FillTurnQueue();
 
 	UFUNCTION()
 	void OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewState);

@@ -11,9 +11,9 @@
 
 void ARangedEnemy::SetIntention()
 {
+  // TODO: visualizer
 
-
-    TrySetState(EEnemyState::IntentionSet);
+  TrySetState(EEnemyState::IntentionSet);
 }
 
 void ARangedEnemy::ExecuteTurn()
@@ -51,7 +51,7 @@ void ARangedEnemy::MoveInRange()
 
 void ARangedEnemy::OnMoveInRangeComplete()
 {
-    ActionScriptPlayerComp->OnScriptComplete.RemoveDynamic(this, &ARangedEnemy::OnMoveInRangeComplete);
+  ActionScriptPlayerComp->OnScriptComplete.RemoveDynamic(this, &ARangedEnemy::OnMoveInRangeComplete);
 
-    SetIntention();
+  SetIntention();
 }

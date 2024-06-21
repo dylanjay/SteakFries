@@ -8,8 +8,6 @@
 
 class UTurnManagerComponent;
 class UCharacterSpawnManagerComponent;
-class AStageGrid;
-class AEnemyController;
 class AEnemy;
 class APlayerBattleCharacter;
 
@@ -22,12 +20,6 @@ class STEAKFRIES_API ABattleGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 protected:
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UTurnManagerComponent> TurnManagerClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UCharacterSpawnManagerComponent> CharacterSpawnManagerClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APlayerBattleCharacter> PlayerClass;
@@ -60,4 +52,7 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void StartBattle();
 };

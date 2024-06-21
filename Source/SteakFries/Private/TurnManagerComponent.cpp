@@ -8,6 +8,8 @@
 #include "BattleCharacter.h"
 #include "BattleGameState.h"
 #include "CharacterManagerComponent.h"
+#include "CharacterTypes.h"
+#include "PlayerControllerBase.h"
 
 
 void UTurnManagerComponent::BeginPlay()
@@ -19,22 +21,18 @@ void UTurnManagerComponent::BeginPlay()
 
 void UTurnManagerComponent::Initialize()
 {
+	PlayerController = Cast<APlayerControllerBase>(GetWorld()->GetFirstPlayerController());
+	check(IsValid(PlayerController));
+
 	ABattleGameState* BattleGameState = GetWorld()->GetGameState<ABattleGameState>();
 
 	CharacterManager = BattleGameState->GetComponentByClass<UCharacterManagerComponent>();
 	check(IsValid(CharacterManager));
-
-	for (ABattleCharacter* Character : CharacterManager->GetAllCharacters())
-	{
-		check(IsValid(Character));
-
-		TurnQueue.Enqueue(Character);
-	}
 }
 
 void UTurnManagerComponent::Start()
 {
-	TrySetState(ETurnManagerState::SetEnemyIntentions);
+	TrySetState(ETurnManagerState::FillingTurnQueue);
 }
 
 void UTurnManagerComponent::SetEnemyIntentions()
@@ -55,10 +53,12 @@ void UTurnManagerComponent::SetEnemyIntentions()
 
 		EnemyController->SetIntention();
 
+		EnemyController->GetEnemy()->OnStateEnterDelegate.AddUniqueDynamic(this, &UTurnManagerComponent::OnEnemyStateEnter);
+
 		return;
 	}
 
-	TrySetState(ETurnManagerState::TurnCycle);
+	TrySetStateNextTick(ETurnManagerState::TurnCycle);
 }
 
 void UTurnManagerComponent::NextTurn()
@@ -67,26 +67,66 @@ void UTurnManagerComponent::NextTurn()
 
 	check(IsValid(CurrentTurnCharacter));
 
-	AEnemyController* EnemyController = nullptr;
-	if (TryGetEnemyController(CurrentTurnCharacter->GetController(), EnemyController))
+	switch (CurrentTurnCharacter->GetTeam())
 	{
+	case ETeam::Player:
+	{
+		PlayerController->Possess(CurrentTurnCharacter);
+	}
+	break;
+
+	case ETeam::Enemy:
+	{
+		AEnemyController* EnemyController = Cast<AEnemyController>(CurrentTurnCharacter->GetController());
+		check(IsValid(EnemyController));
+
 		EnemyController->ExecuteTurn();
+
+	}
+	break;
 	}
 
 	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnCharacter->GetComponentByClass<UPaperFlipbookComponent>();
 	PaperFlipbookComponent->SetSpriteColor(FLinearColor::Red);
 }
 
+void UTurnManagerComponent::FillTurnQueue()
+{
+	for (ABattleCharacter* Character : CharacterManager->GetAllCharacters())
+	{
+		check(IsValid(Character));
+
+		TurnQueue.Enqueue(Character);
+	}
+	check(!TurnQueue.IsEmpty());
+
+	TrySetStateNextTick(ETurnManagerState::SetEnemyIntentions);
+}
+
 void UTurnManagerComponent::EndTurn()
 {
 	check(IsValid(CurrentTurnCharacter));
 
-	TurnQueue.Enqueue(CurrentTurnCharacter);
+	switch (CurrentTurnCharacter->GetTeam())
+	{
+	case ETeam::Player:
+	{
+		PlayerController->UnPossess();
+	}
+		break;
+	}
 
 	UPaperFlipbookComponent* PaperFlipbookComponent = CurrentTurnCharacter->GetComponentByClass<UPaperFlipbookComponent>();
 	PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
 
-	NextTurn();
+	if (TurnQueue.IsEmpty())
+	{
+		TrySetStateNextTick(ETurnManagerState::FillingTurnQueue);
+	}
+	else
+	{
+		NextTurn();
+	}
 }
 
 bool UTurnManagerComponent::TrySetState(ETurnManagerState NewState)
@@ -100,6 +140,9 @@ bool UTurnManagerComponent::TrySetState(ETurnManagerState NewState)
 
 	switch (State)
 	{
+	case ETurnManagerState::FillingTurnQueue:
+		FillTurnQueue();
+		break;
 	case ETurnManagerState::SetEnemyIntentions:
 		SetEnemyIntentions();
 		break;
@@ -107,6 +150,21 @@ bool UTurnManagerComponent::TrySetState(ETurnManagerState NewState)
 		NextTurn();
 		break;
 	}
+
+	return true;
+}
+
+bool UTurnManagerComponent::TrySetStateNextTick(ETurnManagerState NewState)
+{
+	if (State == NewState)
+	{
+		return false;
+	}
+
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this, NewState]()
+		{
+			TrySetState(NewState);
+		});
 
 	return true;
 }
@@ -120,22 +178,10 @@ void UTurnManagerComponent::OnEnemyStateEnter(AEnemy* Enemy, EEnemyState NewStat
 		UPaperFlipbookComponent* PaperFlipbookComponent = Enemy->GetComponentByClass<UPaperFlipbookComponent>();
 		PaperFlipbookComponent->SetSpriteColor(FLinearColor::White);
 
+		Enemy->OnStateEnterDelegate.RemoveDynamic(this, &UTurnManagerComponent::OnEnemyStateEnter);
+
 		SetEnemyIntentions();
 
 		break;
 	}
-}
-
-bool UTurnManagerComponent::TryGetEnemyController(AController* Controller, AEnemyController*& OutEnemyController)
-{
-	OutEnemyController = nullptr;
-
-	check(IsValid(Controller));
-	if (!Controller->IsA(AEnemyController::StaticClass()))
-	{
-		return false;
-	}
-
-	OutEnemyController = Cast<AEnemyController>(Controller);
-	return true;
 }

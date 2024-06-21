@@ -11,7 +11,7 @@ class APlayerBattleCharacter;
 class AEnemy;
 
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class STEAKFRIES_API UCharacterManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()

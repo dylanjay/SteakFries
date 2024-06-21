@@ -40,6 +40,9 @@ protected:
 
 	CardinalPathFinding<AStageCell>* PathFinding = nullptr;
 
+public:
+
+	UPROPERTY(BlueprintAssignable)
 	FOnBeginCursorOverCell OnBeginCursorOverCellDelegate;
 	
 public:	

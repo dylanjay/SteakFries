@@ -15,7 +15,7 @@ void UCharacterManagerComponent::Initialize()
 	UCharacterSpawnManagerComponent* CharacterSpawnManager = BattleGameMode->GetCharacterSpawnManager();
 	check(IsValid(CharacterSpawnManager));
 
-	CharacterSpawnManager->GetOnCharacterSpawnedDelegate().AddUniqueDynamic(this, &UCharacterManagerComponent::OnCharacterSpawned);
+	CharacterSpawnManager->OnCharacterSpawnedDelegate.AddUniqueDynamic(this, &UCharacterManagerComponent::OnCharacterSpawned);
 }
 
 void UCharacterManagerComponent::OnCharacterSpawned(ABattleCharacter* Character)

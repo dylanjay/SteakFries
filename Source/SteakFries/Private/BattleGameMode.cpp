@@ -20,6 +20,8 @@ void ABattleGameMode::BeginPlay()
 
 	BattleGameState->Initialize();
 
+	CharacterSpawnManager->Initialize();
+
 	const TPoint PlayerStartingPoint = TPoint(PlayerStartingPointArray[0], PlayerStartingPointArray[1]);
 	CharacterSpawnManager->Spawn<APlayerBattleCharacter>(PlayerClass, ETeam::Player, PlayerStartingPoint);
 
@@ -28,7 +30,16 @@ void ABattleGameMode::BeginPlay()
 
 	TurnManager->Initialize();
 
-	StartPlay();
+	FTimerHandle StartBattleTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		StartBattleTimerHandle,
+		this,
+		&ABattleGameMode::StartBattle,
+		2.0f,
+		false);
+}
 
+void ABattleGameMode::StartBattle()
+{
 	Super::BeginPlay();
 }

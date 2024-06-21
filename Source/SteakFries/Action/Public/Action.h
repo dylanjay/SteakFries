@@ -38,8 +38,7 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintNativeEvent)
-	void Initialize(AStageGrid* InStageGrid, AStageCell* InCellLocation);
+	virtual void Initialize(AStageCell* InCellLocation);
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool CanPlay(AStageCell* CurrentCell);
@@ -52,6 +51,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetDelay() const { return Delay; }
+
+	UFUNCTION(BlueprintCallable)
+	AStageGrid* GetStageGrid() const { return StageGrid; }
 
 	UFUNCTION(BlueprintCallable)
 	AStageCell* GetCellLocation() const { return CellLocation; }

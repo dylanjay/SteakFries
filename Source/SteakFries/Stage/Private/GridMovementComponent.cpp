@@ -3,11 +3,16 @@
 
 #include "GridMovementComponent.h"
 #include "StageGrid.h"
+#include "BattleGameState.h"
+#include "StageGridManagerComponent.h"
 
-void UGridMovementComponent::Initialize(AStageGrid* InStageGrid, AStageCell* InStageCell)
+void UGridMovementComponent::Initialize(AStageCell* InStageCell)
 {
-	StageGrid = InStageGrid;
 	CurrentCell = InStageCell;
+	check(IsValid(CurrentCell));
+
+	StageGrid = GetWorld()->GetGameState<ABattleGameState>()->GetStageGrid();
+	check(IsValid(StageGrid));
 }
 
 bool UGridMovementComponent::TryMoveTo(AStageCell* Destination)

@@ -58,7 +58,7 @@ bool UActionScriptGeneratorComponent::TryAddAction(AAction* Action)
 		return false;
 	}
 
-	Action->Initialize(StageGrid, CurrentCell);
+	Action->Initialize(CurrentCell);
 
 	if (!Action->CanPlay(CurrentCell))
 	{
